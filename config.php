@@ -1,10 +1,7 @@
 <?php
 include "database.php";
 	try {
-		$pdo = new PDO($DB_DSN);
-		$pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+		$pdo = get_database_connection();
 		$pdo->query("CREATE TABLE IF NOT EXISTS users (
 			id			INTEGER			PRIMARY KEY AUTOINCREMENT,
 			email		varchar(255),

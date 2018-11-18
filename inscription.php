@@ -1,15 +1,29 @@
 <?php
+include 'database.php';
 if ($_SERVER["REQUEST_METHOD"] === "POST")
 {
 	$email = htmlspecialchars($_POST['email']);
 	$username = htmlspecialchars($_POST['username']);
-	$password = hash(whirlpool, $_POST['password']);
-	$query = $pdo->prepare("INSERT INTO users (username, password) VALUES (:email, :username, :password)");
-	$query->execute(array(
-		"email"		=> $email,
-		"username"	=> $username,
-		"password"	=> $password
-	));
+	$password = hash("whirlpool", $_POST['password']);
+	if (user_exist($email, $username))
+	{
+
+	}
+	else
+	{
+		try {
+			$pdo = get_database_connection();
+			$query = $pdo->prepare("INSERT INTO users (email, username, password) VALUES (:email, :username, :password)");
+			$query->execute(array(
+				"email"		=> $email,
+				"username"	=> $username,
+				"password"	=> $password
+			));
+		} catch (Exception $e) {
+			echo $e->getMessage();
+			die();
+		}
+	}
 }
 ?>
 <!DOCTYPE html>
