@@ -13,5 +13,10 @@ function get_users()
 		echo $e->getMessage();
 	}
 }
-get_users();
+
+#create_user("alec@menard.com", "alec", "abc123");
+#get_users();
+
+#echo create_user("alec@menard.comm", "alecc", "abc123") ? "created" : "not created";
+echo login_user("aleccc", "abc123") ? "loged" : "not loged";
 ?>

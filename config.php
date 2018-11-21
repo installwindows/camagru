@@ -4,8 +4,8 @@ include "database.php";
 		$pdo = get_database_connection();
 		$pdo->query("CREATE TABLE IF NOT EXISTS users (
 			id			INTEGER			PRIMARY KEY AUTOINCREMENT,
-			email		varchar(255),
-			username	varchar(255),
+			email		varchar(255)	UNIQUE,
+			username	varchar(255)	UNIQUE,
 			password	varchar(255)
 		);");
 	} catch (Exception $e) {
