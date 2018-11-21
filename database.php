@@ -65,7 +65,7 @@ function create_user($email, $username, $password)
 	return false;
 }
 
-function login_user($username, $password)
+function check_user($username, $password)
 {
 	try {
 		$pdo = get_database_connection();

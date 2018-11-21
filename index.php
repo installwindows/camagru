@@ -1,4 +1,10 @@
 <?php
+session_start();
+$welcome_message = "";
+if (isset($_SESSION["user"]))
+{
+	$welcome_message = "Bienvenue {$_SESSION['user']}.";
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -8,7 +14,9 @@
 	<title>Camagru</title>
 </head>
 <body>
-<a href="connexion.php">Connexion</a> | <a href="inscription.php">Inscription</a>
+<a href="connexion.php">Connexion</a> | <a href="inscription.php">Inscription</a> | <a href="deconnexion.php">Déconnexion</a>
+<hr>
 <h2>Camagru!</h2>
+<h3><?php echo "$welcome_message"; ?></h3>
 </body>
 </html>
