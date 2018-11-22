@@ -38,7 +38,7 @@ function get_user_by_username($username)
 	}
 }
 
-function create_user($email, $username, $password)
+function create_user($email, $username, $password, $verified = 0)
 {
 	$unique_email = false;
 	$unique_username = false;
@@ -50,11 +50,12 @@ function create_user($email, $username, $password)
 	{
 		try {
 			$pdo = get_database_connection();
-			$query = $pdo->prepare("INSERT INTO users (email, username, password) VALUES (:email, :username, :password)");
+			$query = $pdo->prepare("INSERT INTO users (email, username, password, email_verified) VALUES (:email, :username, :password, :verified)");
 			$query->execute(array(
 				"email"		=> $email,
 				"username"	=> $username,
-				"password"	=> hash("whirlpool", $password)
+				"password"	=> hash("whirlpool", $password),
+				"verified" => $verified
 			));
 		} catch (Exception $e) {
 			echo $e->getMessage();
