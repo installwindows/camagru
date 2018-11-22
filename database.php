@@ -93,4 +93,22 @@ function insert_email_id($email, $id)
 
 }
 
+function set_email($old_email, $new_email)
+{
+	$user = get_user_by_email($old_email);
+	if (empty($user) || !empty(get_user_by_email($new_email)))
+	{
+		return false;
+	}
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("UPDATE users SET email = :new_email WHERE email = :old_email");
+		$query->execute(array("new_email" => $new_email, "old_email" => $old_email));
+	} catch (Exception $e) {
+		echo $e->getMessage();
+		die();
+	}
+	return true;
+}
+
 ?>

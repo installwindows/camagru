@@ -14,7 +14,7 @@ if (isset($_SESSION["user"]))
 	<title>Camagru</title>
 </head>
 <body>
-<a href="connexion.php">Connexion</a> | <a href="inscription.php">Inscription</a> | <a href="deconnexion.php">Déconnexion</a>
+<a href="connexion.php">Connexion</a> | <a href="inscription.php">Inscription</a> | <a href="deconnexion.php">Déconnexion</a> | <a href="compte.php">Compte</a>
 <hr>
 <h2>Camagru!</h2>
 <h3><?php echo "$welcome_message"; ?></h3>

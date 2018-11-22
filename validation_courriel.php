@@ -18,6 +18,8 @@ if (isset($_GET["id"]))
 			header("Refresh:3; url=index.php");
 			echo "Courriel validé.";
 		}
+		else
+			header("Location: index.php");
 	} catch (Exception $e) {
 		echo $e->getMessage();
 		die();
