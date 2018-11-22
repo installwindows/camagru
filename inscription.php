@@ -47,6 +47,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 		if (create_user($email, $username, $password))
 		{
 			//send_verification_email($email, $username);
+			$message = "Vérifiez votre courriel en utilisant ce lien: ";
+			$id = hash('whirlpool', time() . $email . $username . $password . "camagru");
+			$verification_url = (empty($_SERVER['HTTPS']) ? "http://" : "https://") . $_SERVER['HTTP_HOST'] . "/validation_courriel.php?id=" . $id;
+			$message .= "<a href='$verification_url'>$verification_url</a>";
+			$headers = "Content-Type: text/html; charset=UTF-8\r\n";	
+			mail($email, "Vérification compte Camagru", $message, $headers);
+
+			insert_email_id($email, $id);
+
+			$_SESSION["user"] = $username;
 			header("Location: index.php");
 			die();
 		}

@@ -79,4 +79,17 @@ function check_user($username, $password)
 	}
 }
 
+function insert_email_id($email, $id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("INSERT INTO email_verification VALUES (:id, :email)");
+		$query->execute(array("id" => $id, "email" => $email));
+	} catch (Exception $e) {
+		echo $e->getMessage();
+		die();
+	}
+
+}
+
 ?>
