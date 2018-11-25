@@ -14,12 +14,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SESSION['user']))
 {
 	if (isset($_POST['update_email']))
 	{
-		if (!validate_email($_POST['email']))
+		$email = strtolower($_POST['email']);
+		if (!validate_email($email))
 		{
 			$email_message = "Ceci n'est pas une syntax de courriel acceptable.";
 		}
-		else if (set_email($user['email'], $_POST['email']))
+		else if (empty(get_user_by_email($email)))
 		{
+			send_task($user['id'], "change_email", $email);
 			$email_message = "Veuillez confirmez le nouveau courriel en suivant le lien envoyé à ce dernier.";
 		}
 		else

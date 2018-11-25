@@ -10,6 +10,20 @@ function get_database_connection()
 	return $pdo;
 }
 
+function get_user_by_id($id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("SELECT * FROM users WHERE id = :id");
+		$query->execute(array("id" => $id));
+		$results = $query->fetchAll();
+		return empty($results) ? $results : $results[0];
+	} catch (Exception $e) {
+		echo $e->getMessage();
+		die();
+	}
+}
+
 function get_user_by_email($email)
 {
 	try {
@@ -57,40 +71,29 @@ function create_user($email, $username, $password, $verified = 0)
 				"password"	=> hash("whirlpool", $password),
 				"verified" => $verified
 			));
+			return $pdo->lastInsertId();
 		} catch (Exception $e) {
 			echo $e->getMessage();
 			die();
 		}
-		return true;
 	}
 	return false;
 }
 
-function check_user($username, $password)
+function authenticate_user($username, $password)
 {
 	try {
 		$pdo = get_database_connection();
 		$query = $pdo->prepare("SELECT * FROM users WHERE username = :username AND password = :password");
 		$query->execute(array("username" => $username, "password" => hash("whirlpool", $password)));
 		$results = $query->fetchAll();
-		return empty($results) ? false : true;
+		if (!empty($results))
+			return $results[0];
+		return false;
 	} catch (Exception $e) {
 		echo $e->getMessage();
 		die();
 	}
-}
-
-function insert_email_id($email, $id)
-{
-	try {
-		$pdo = get_database_connection();
-		$query = $pdo->prepare("INSERT INTO email_verification VALUES (:id, :email)");
-		$query->execute(array("id" => $id, "email" => $email));
-	} catch (Exception $e) {
-		echo $e->getMessage();
-		die();
-	}
-
 }
 
 function set_email($old_email, $new_email)
@@ -109,6 +112,38 @@ function set_email($old_email, $new_email)
 		die();
 	}
 	return true;
+}
+
+function send_task($user_id, $task, $data = "")
+{
+	$user = get_user_by_id($user_id);
+	$email = $user['email'];
+	$message = "";
+	$subject = "";
+	$headers = "Content-Type: text/html; charset=UTF-8\r\n";
+	$id = hash('whirlpool', time() . rand() . $email);
+	$verification_url = "http://" . $_SERVER['HTTP_HOST'] . "/email.php?id=" . $id;
+
+	switch ($task)
+	{
+	case "inscription_email":
+		$subject = "Vérification compte Camagru";
+		$message = "<h1>Bienvenue sur Camagru!</h1>Vérifiez votre courriel en utilisant ce lien: ";
+		$message .= "<a href='$verification_url'>C'est moi le lien!</a>";
+		break;
+	case "change_email":
+		$email = $data;
+		$subject = "ALLO ICI CAMAGRULL! Changement de EMAILE!";
+		$message = "Cliquez sur l'unique lien de ce courriel pour changer votre mot de passe.<br>";
+		$message .= "<a href='$verification_url'>Je suis l'unique lien de ce courriel.</a>";
+		break;
+	case "forget_password":
+		break;
+	}
+	mail($email, $subject, $message, $headers);
+	$pdo = get_database_connection();
+	$query = $pdo->prepare("INSERT INTO email_task VALUES (:id, :user_id, :task, :data)");
+	$query->execute(array("id" => $id, "user_id" => $user['id'], "task" => $task, "data" => $data));
 }
 
 ?>

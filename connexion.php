@@ -8,11 +8,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
 	$username = $_POST["username"];
 	$password = $_POST["password"];
-	if (check_user($_POST["username"], $_POST["password"]))
+	if ($user = authenticate_user($_POST["username"], $_POST["password"]))
 	{
-		$_SESSION['user'] = $_POST["username"];
-		header("Location: index.php");
-		die();
+		if ($user['email_verified'])
+		{
+			$_SESSION['user'] = $_POST["username"];
+			header("Location: index.php");
+			die();
+		}
+		else
+		{
+			$error_message = "Adresse courriel non-validée.";
+		}
 	}
 	else
 	{

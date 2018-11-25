@@ -8,7 +8,7 @@ $password = ""; $password_error = false; $password_error_message = "";
 $label_class = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST")
 {
-	$email = $_POST['email'];
+	$email = strtolower($_POST['email']);
 	$username = $_POST['username'];
 	$password = $_POST['password'];
 
@@ -44,20 +44,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 	}
 	else
 	{
-		if (create_user($email, $username, $password))
+		if ($user_id = create_user($email, $username, $password))
 		{
-			//send_verification_email($email, $username);
-			$message = "Vérifiez votre courriel en utilisant ce lien: ";
-			$id = hash('whirlpool', time() . $email . $username . $password . "camagru");
-			$verification_url = (empty($_SERVER['HTTPS']) ? "http://" : "https://") . $_SERVER['HTTP_HOST'] . "/validation_courriel.php?id=" . $id;
-			$message .= "<a href='$verification_url'>$verification_url</a>";
-			$headers = "Content-Type: text/html; charset=UTF-8\r\n";	
-			mail($email, "Vérification compte Camagru", $message, $headers);
-
-			insert_email_id($email, $id);
-
-			$_SESSION["user"] = $username;
-			header("Location: index.php");
+			echo "Veuillez activer votre compte en suivant le lien envoyé à celui-ci.";
+			send_task($user_id, "inscription_email");
+			header("Refresh:3; url=index.php");
 			die();
 		}
 		else
