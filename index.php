@@ -1,9 +1,11 @@
 <?php
+include 'database.php';
 session_start();
 $welcome_message = "";
-if (isset($_SESSION["user"]))
+if (isset($_SESSION["user_id"]))
 {
-	$welcome_message = "Bienvenue {$_SESSION['user']}.";
+	$user = get_user_by_id($_SESSION["user_id"]);
+	$welcome_message = "Bienvenue {$user['username']}.";
 }
 ?>
 <!DOCTYPE html>

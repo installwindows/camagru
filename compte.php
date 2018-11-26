@@ -2,16 +2,12 @@
 include 'database.php';
 include 'validate.php';
 session_start();
-if (isset($_SESSION['user']))
+if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SESSION['user_id']))
 {
-	$user = get_user_by_username($_SESSION['user']);
-}
-else
-{
-	header("Location: connexion.php");
-}
-if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SESSION['user']))
-{
+	$email_message = "";
+	$username_message = "";
+	$password_message = "";
+	$user = get_user_by_id($_SESSION['user_id']);
 	if (isset($_POST['update_email']))
 	{
 		$email = strtolower($_POST['email']);
@@ -31,10 +27,36 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SESSION['user']))
 	}
 	if (isset($_POST['update_username']))
 	{
+		$username = $_POST['username'];
+		if (!validate_username($username))
+			$username_message = "Souvenez-vous, uniquement des lettres et chiffres du genre « z », « y », « z », « z » ou encore « 4 », « 1 » ou bien « 9 ». MINIMUM de 3!";
+		else if (empty(get_user_by_username($username)))
+		{
+			change_username($user['id'], $username);
+			$username_message = "Nom d'utilisateur modifié avec grand succès!";
+		}
+		else
+			$username_message = "Nom d'utilisateur déjà utilisé";
 	}
 	if (isset($_POST['update_password']))
 	{
+		$password = $_POST['password'];
+		if (!validate_password($password))
+			$username_message = "TOO BIG!.";
+		else
+		{
+			change_password($user['id'], hash('whirlpool', $password));
+			$username_message = "Huge success!";
+		}
 	}
+}
+if (isset($_SESSION['user_id']))
+{
+	$user = get_user_by_id($_SESSION['user_id']);
+}
+else
+{
+	header("Location: connexion.php");
 }
 ?>
 <!DOCTYPE html>

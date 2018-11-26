@@ -1,6 +1,8 @@
 <?php
 include 'database.php';
 session_start();
+if (isset($_SESSION['user_id']))
+	header("Location: compte.php");
 $error_message = "";
 $username = "";
 $password = "";
@@ -12,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	{
 		if ($user['email_verified'])
 		{
-			$_SESSION['user'] = $_POST["username"];
+			$_SESSION['user_id'] = $user['id'];
 			header("Location: index.php");
 			die();
 		}
@@ -39,6 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 <form method="POST" action="connexion.php">
 	Username: <input type="text" name="username" value="<?php echo $username; ?>"><br>
 	Password: <input type="password" name="password" value="<?php echo $password; ?>"><br>
+	<?php if (!empty($error_message)) { ?>
+		<a href="oublie.php">Mot de passe oublié?</a><br>
+	<?php } ?>
 	<input type="submit" name="submit"><br>
 	<?php echo $error_message; ?>
 </form>

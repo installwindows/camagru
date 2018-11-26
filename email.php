@@ -15,7 +15,7 @@ if (isset($_GET["id"]))
 			switch ($results[0]['task'])
 			{
 			case "change_email":
-				set_email($user['email'], $data);
+				change_email($user['id'], $data);
 				echo "Courriel mis à jour";
 				break;
 			case "inscription_email":
@@ -23,8 +23,13 @@ if (isset($_GET["id"]))
 				$query->execute(array("user_id" => $user['id']));
 				echo "Courriel validé.";
 				break;
-			case "forget_password":
-
+			case "forget_password": ?>
+				<form method="POST" action="oublie.php">
+					Entrez le nouveau mot de passe: <input type="password" name="password"><br>
+					<input type="hidden" name="id" value="<?php echo $id; ?>">
+					<input type="submit" value="Confirmer">
+				</form><?php
+				die();
 				break;
 			}
 			$query = $pdo->prepare("DELETE FROM email_task WHERE id = :id");

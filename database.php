@@ -96,17 +96,46 @@ function authenticate_user($username, $password)
 	}
 }
 
-function set_email($old_email, $new_email)
+function change_username($user_id, $new_username)
 {
-	$user = get_user_by_email($old_email);
-	if (empty($user) || !empty(get_user_by_email($new_email)))
+	if (!empty(get_user_by_username($new_username)))
 	{
 		return false;
 	}
 	try {
 		$pdo = get_database_connection();
-		$query = $pdo->prepare("UPDATE users SET email = :new_email WHERE email = :old_email");
-		$query->execute(array("new_email" => $new_email, "old_email" => $old_email));
+		$query = $pdo->prepare("UPDATE users SET username = :new_username WHERE id = :user_id");
+		$query->execute(array("new_username" => $new_username, "user_id" => $user_id));
+	} catch (Exception $e) {
+		echo $e->getMessage();
+		die();
+	}
+	return true;
+}
+
+function change_password($user_id, $new_password)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("UPDATE users SET password = :new_password WHERE id = :user_id");
+		$query->execute(array("new_password" => $new_password, "user_id" => $user_id));
+	} catch (Exception $e) {
+		echo $e->getMessage();
+		die();
+	}
+	return true;
+}
+
+function change_email($user_id, $new_email)
+{
+	if (!empty(get_user_by_email($new_email)))
+	{
+		return false;
+	}
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("UPDATE users SET email = :new_email WHERE id = :user_id");
+		$query->execute(array("new_email" => $new_email, "user_id" => $user_id));
 	} catch (Exception $e) {
 		echo $e->getMessage();
 		die();
@@ -138,6 +167,8 @@ function send_task($user_id, $task, $data = "")
 		$message .= "<a href='$verification_url'>Je suis l'unique lien de ce courriel.</a>";
 		break;
 	case "forget_password":
+		$subject = "{$user['username']}, mot de passe oublié";
+		$message = "<p>Résultat de notre recherche: que dalle</p>Activez ceci: &#10087; <a href='$verification_url'>HYPERLIEN!</a> &#9753; pour le remplacer.";
 		break;
 	}
 	mail($email, $subject, $message, $headers);
