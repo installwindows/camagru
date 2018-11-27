@@ -28,15 +28,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 		$error_message = "Nom d'utilisateur et/ou mot de passe invalide.";
 	}
 }
+$page_title = "Connexion";
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
-	<title>Connexion</title>
-</head>
-<body>
+<?php include 'head.php'; ?>
+<?php include 'header.php'; ?>
 <h2>Connexion</h2>
 <form method="POST" action="connexion.php">
 	Username: <input type="text" name="username" value="<?php echo $username; ?>"><br>
@@ -47,5 +42,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	<input type="submit" name="submit"><br>
 	<?php echo $error_message; ?>
 </form>
-</body>
-</html>
+<?php include 'footer.php'; ?>

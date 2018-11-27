@@ -12,10 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 		$email = strtolower($_POST['email']);
 		if (validate_email($email))
 		{
-			if ($user_id = get_user_by_email($email))
+			if ($user = get_user_by_email($email))
 			{
 				echo "Le <abbr title='Département des Mots de Passe Perdus'>DMPP</abbr> envera le résultat de ses recherches sous peu.";
-				send_task($user_id, "password_lost");
+				send_task($user['id'], "password_lost");
 			}
 			else
 			{
@@ -33,11 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 		$password = $_POST['password'];
 		if (!validate_password($password))
 			$err_msg = "Bad password.";
-		else if ($user_id = get_email_task($id))//TODO
+		else if ($task = get_email_task($id))
 		{
-			change_password($user_id, hash('whirlpool', $password));
+			change_password($task['user_id'], hash('whirlpool', $password));
 			echo "Password changed!";
-			remove_task($id);//TODO
+			remove_task($id);
 			header("refresh:3; url=connexion.php");
 			die();
 		}
@@ -47,8 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 }
 if (isset($_GET['id']))
 {
-	//TODO
-}
+	$id = htmlspecialchars($_GET['id']);?>
+	<form method="POST" action="oublie.php">
+		Entrez le nouveau mot de passe: <input type="password" name="password"><br>
+		<input type="hidden" name="id" value="<?php echo $id; ?>">
+		<input type="submit" value="Confirmer">
+	</form>
+<?php }
 ?>
 <!DOCTYPE html>
 <html>

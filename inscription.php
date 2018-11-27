@@ -1,5 +1,7 @@
 <?php
 session_start();
+if (isset($_SESSION['user_id']))
+	header("Location: compte.php");
 include 'database.php';
 include 'validate.php';
 $email = ""; $email_error = false; $email_error_message = "";
@@ -57,16 +59,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 		}
 	}
 }
+$page_title = "Inscription à Camagru!";
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
-	<title>Inscription</title>
-	<link rel="stylesheet" href="global.css">
-</head>
-<body>
+<?php include 'head.php'; ?>
+<?php include 'header.php'; ?>
 <h2>Inscription</h2>
 <form method="POST" action="inscription.php">
 <label for="email" class="<?php echo $email_error ? $label_class : ""; ?>">Courriel</label>: <input type="text" name="email" id="email" value="<?php echo $email; ?>"> <?php echo $email_error_message; ?><br>
@@ -74,5 +70,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 	<label for="password" class="<?php echo $password_error ? $label_class : ""; ?>">Password</label>: <input type="password" name="password" id="password" value="<?php echo $password; ?>"> <?php echo $password_error_message; ?><br>
 	<input type="submit" name="submit" value="Soumettre"><br>
 </form>
-</body>
-</html>
+<?php include 'footer.php'; ?>

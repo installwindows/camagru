@@ -166,7 +166,8 @@ function send_task($user_id, $task, $data = "")
 		$message = "Cliquez sur l'unique lien de ce courriel pour changer votre mot de passe.<br>";
 		$message .= "<a href='$verification_url'>Je suis l'unique lien de ce courriel.</a>";
 		break;
-	case "forget_password":
+	case "password_lost":
+		$verification_url = "http://" . $_SERVER['HTTP_HOST'] . "/oublie.php?id=" . $id;
 		$subject = "{$user['username']}, mot de passe oublié";
 		$message = "<p>Résultat de notre recherche: que dalle</p>Activez ceci: &#10087; <a href='$verification_url'>HYPERLIEN!</a> &#9753; pour le remplacer.";
 		break;
@@ -175,6 +176,37 @@ function send_task($user_id, $task, $data = "")
 	$pdo = get_database_connection();
 	$query = $pdo->prepare("INSERT INTO email_task VALUES (:id, :user_id, :task, :data)");
 	$query->execute(array("id" => $id, "user_id" => $user['id'], "task" => $task, "data" => $data));
+}
+
+function get_email_task($id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("SELECT * FROM email_task WHERE id = :id");
+		$query->execute(array("id" => $id));
+		$result = $query->fetch();
+		if (!empty($result))
+		{
+			return $result;
+		}
+		else
+		{
+			return false;
+		}
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+}
+
+function remove_task($id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("DELETE FROM email_task WHERE id = :id");
+		$query->execute(array("id" => $id));
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
 }
 
 ?>

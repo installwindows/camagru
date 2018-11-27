@@ -1,3 +1,7 @@
+a:first-child {
+	color: black;
+	
+}
 .label_error {
 	color: red;
 }

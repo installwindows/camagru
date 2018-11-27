@@ -58,34 +58,28 @@ else
 {
 	header("Location: connexion.php");
 }
+$page_title = "Gestion du compte";
 ?>
-<!DOCTYPE html>
-<html>
-<head>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta charset="utf-8">
-	<title>Compte</title>
-</head>
-<body>
-<?php echo $user['email']; ?><br>
-<?php echo $user['username']; ?><br>
+<?php include 'head.php'; ?>
+<?php include 'header.php'; ?>
+<div>
+Adress courriel: <?= $user['email']; ?><br>
+Nom d'utilisateur: <?= $user['username']; ?><br>
+</div>
 <hr>
 <form method="POST" action="compte.php">
 	Changer courriel: <input type="text" name="email">
 	<input type="submit" name="update_email" value="Confirmer">
 </form>
 <div><?php echo $email_message; ?></div>
-<hr>
 <form method="POST" action="compte.php">
 	Changer nom d'utilisateur: <input type="text" name="username">
 	<input type="submit" name="update_username" value="Confirmer">
 </form>
 <div><?php echo $username_message; ?></div>
-<hr>
 <form method="POST" action="compte.php">
 	Changer mot de passe: <input type="password" name="password">
 	<input type="submit" name="update_password" value="Confirmer">
 </form>
 <div><?php echo $password_message; ?></div>
-</body>
-</html>
+<?php include 'footer.php'; ?>
