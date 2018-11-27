@@ -17,12 +17,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 	if (!validate_email($email))
 	{
 		$email_error = true;
-		$email_error_message = "Le courriel ne respecte pas la syntax du RFC 822.";
+		$email_error_message = "Le courriel ne respecte pas la syntaxe du RFC 822.";
 	}
 	if (!validate_username($username))
 	{
 		$username_error = true;
-		$username_error_message = "Le nom d'utilisateur ne respecte pas la syntax arbitraire de 3 à 32 caractères de long composés de symbols alphanumérique.";
+		$username_error_message = "Le nom d'utilisateur ne respecte pas la syntaxe arbitraire de 3 à 32 caractères de long composés de symboles alphanumérique.";
 	}
 	if (!validate_password($password))
 	{

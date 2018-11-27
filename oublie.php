@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 		{
 			if ($user = get_user_by_email($email))
 			{
-				echo "Le <abbr title='Département des Mots de Passe Perdus'>DMPP</abbr> envera le résultat de ses recherches sous peu.";
+				echo "Le <abbr title='Département des Mots de Passe Perdus'>DMPP</abbr> enverra le résultat de ses recherches sous peu.";
 				send_task($user['id'], "password_lost");
 			}
 			else

@@ -5,3 +5,7 @@ a:first-child {
 .label_error {
 	color: red;
 }
+
+p {
+	text-indent: 20px;
+}

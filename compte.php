@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SESSION['user_id']))
 		$email = strtolower($_POST['email']);
 		if (!validate_email($email))
 		{
-			$email_message = "Ceci n'est pas une syntax de courriel acceptable.";
+			$email_message = "Ceci n'est pas une syntaxe de courriel acceptable.";
 		}
 		else if (empty(get_user_by_email($email)))
 		{

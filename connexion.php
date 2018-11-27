@@ -34,8 +34,8 @@ $page_title = "Connexion";
 <?php include 'header.php'; ?>
 <h2>Connexion</h2>
 <form method="POST" action="connexion.php">
-	Username: <input type="text" name="username" value="<?php echo $username; ?>"><br>
-	Password: <input type="password" name="password" value="<?php echo $password; ?>"><br>
+	Nom d'utilisateur: <input type="text" name="username" value="<?php echo $username; ?>"><br>
+	Mot de passe: <input type="password" name="password" value="<?php echo $password; ?>"><br>
 	<?php if (!empty($error_message)) { ?>
 		<a href="oublie.php">Mot de passe oublié?</a><br>
 	<?php } ?>
