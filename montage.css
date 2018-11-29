@@ -2,34 +2,39 @@
 	grid-area: h;
 	color: #420420;
 	background-color: #ABCDEF;
+	padding: 5px;
 }
 
 .main {
 	grid-area: m;
 	color: #420420;
 	background-color: #DEAD69;
+	padding: 10px;
 }
 
 .side {
 	grid-area: s;
 	color: #012345;
 	background-color: #BEEFFF;
+	padding: 10px;
 }
 
 .footer {
 	grid-area: f;
 	color: #420420;
 	background-color: #CAACAA;
+	padding: 5px;
 }
 
 .container {
 	display: grid;
 	grid-template-areas:
 		". h h h h h h h ."
-		"m m m m m s s s s"
+		"m m m m m m s s s"
 		". f f f f f f f .";
-	grid-template-columns: repeat(9, 1f);
-	grid-template-rows: auto;
+	grid-template-columns: repeat(9, 1fr);
+	grid-template-rows: 33px auto 33px;
+	min-height: 100vh;
 }
 
 @media screen and (max-width: 1000px) {
@@ -44,6 +49,15 @@
 
 .webcam {
 	float: left;
+	margin: 7px;
+}
+
+body, html {
+	margin: 0px;
+	padding: 0px;
+}
+
+div {
 }
 
 canvas {

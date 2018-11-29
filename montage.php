@@ -20,8 +20,11 @@ $page_head = "<link rel='stylesheet' href='montage.css'>";
 		<canvas id="canvas" width="640" height="480"></canvas>
 		<div class="image_list">
 			<span id="select_error"></span><br>
-			<label for="img1"><input type="checkbox" name="img1" id="img1"><img class="lst_img" src="img1.png" height="120" width="160"></label>
-			<label for="img2"><input type="checkbox" name="img2" id="img2"><img class="lst_img" src="img2.png" height="120" width="160"></label>
+			<?php
+			$files = array_diff(scandir('images'), ['.', '..']);
+			foreach ($files as $file) { ?>
+				<label for="<?= $file ?>"><input type="checkbox" name="<?= $file ?>" id="<?= $file ?>"><img class="lst_img" src="images/<?= $file ?>" height="120" width="160"></label>
+			<?php } ?>
 		</div>
 	</div>
 	<div class='side'>
