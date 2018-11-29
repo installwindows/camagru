@@ -1,4 +1,3 @@
-<body>
 <div class="header">
 	<a href="index.php">Camagru</a> |
 	<a href="galerie.php">Galerie</a> |
@@ -11,4 +10,3 @@
 		<a href="deconnexion.php">Déconnexion</a>
 	<?php } ?>
 </div>
-<hr>

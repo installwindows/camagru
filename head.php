@@ -8,3 +8,4 @@
 	<title><?= $page_title ?></title>
 	<?= $page_head ?>
 </head>
+<body>
