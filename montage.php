@@ -13,19 +13,24 @@ $page_head = "<link rel='stylesheet' href='montage.css'>";
 <?php include 'header.php' ?>
 	<div class='main'>
 		<h1>Montage</h1>
-		<div class="webcam">
-			<video id="video" width="640" height="480" autoplay></video><br>
-			<button id="snap" onclick="upload_montage()">SNAP!</button>
-		</div>
-		<canvas id="canvas" width="640" height="480"></canvas>
-		<div class="image_list">
-			<span id="select_error"></span><br>
-			<?php
-			$files = array_diff(scandir('images'), ['.', '..']);
-			foreach ($files as $file) { ?>
-				<label for="<?= $file ?>"><input type="checkbox" name="<?= $file ?>" id="<?= $file ?>"><img class="lst_img" src="images/<?= $file ?>" height="120" width="160"></label>
-			<?php } ?>
-		</div>
+		<form method="POST" action="montage.php">
+			<div class="webcam">
+				<div class="overlay_box">
+					<div class="overlay"></div>
+					<video id="video" width="640" height="480" autoplay></video><br>
+				</div>
+				<button id="snap" onclick="upload_montage()">SNAP!</button>
+			</div>
+			<canvas id="canvas" width="640" height="480"></canvas>
+			<div class="image_list">
+				<span id="select_error"></span><br>
+				<?php
+				$files = array_diff(scandir('images'), ['.', '..']);
+				foreach ($files as $file) { ?>
+					<label for="<?= $file ?>"><input onchange="checkbox_onchange(this)" type="checkbox" name="<?= $file ?>" id="<?= $file ?>"><img class="lst_img" src="images/<?= $file ?>" height="120" width="160" onclick="document.querySelector('.overlay').style.backgroundImage = 'url(\'images/<?= $file ?>\')';"></label>
+				<?php } ?>
+			</div>
+		</form>
 	</div>
 	<div class='side'>
 		side
@@ -49,16 +54,31 @@ function upload_montage()
 		document.getElementById('select_error').innerHTML = "Sélectionnez au moins une image.";
 	}
 }
+
+function checkbox_onchange(checkbox)
+{
+	var checked = document.querySelectorAll('input[type=checkbox]:checked');
+	if (checked.length)
+	{
+		for (var i = 0; i < checked.length; i++)
+		{
+			checked[i].checked = false;
+		}
+	}
+	checkbox.checked = true;
+}
+
 </script>
 <script>
 var video = document.getElementById('video');
+/*
 var no_webcam = `
 		<form method='POST' action='montage.php' enctype='multipart/form-data'>
 			Image: <input type='file' name='file_image'><br>
 			<input type='submit' value='FUSION!'>
 		</form>
 	`;
-
+ */
 if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia))
 {
 	document.querySelector('.webcam').innerHTML = "No webcam for you. Utilisez Firefox pour avoir accès à la caméra<br>" + no_webcam;

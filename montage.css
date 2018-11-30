@@ -1,28 +1,30 @@
 .header {
 	grid-area: h;
 	color: #420420;
-	background-color: #ABCDEF;
+	/*background-color: #ABCDEF;*/
 	padding: 5px;
 }
 
 .main {
 	grid-area: m;
 	color: #420420;
-	background-color: #DEAD69;
+	/*background-color: #DEAD69;*/
+	background-image: url('pink dust.png');
 	padding: 10px;
 }
 
 .side {
 	grid-area: s;
 	color: #012345;
-	background-color: #BEEFFF;
+	/*background-color: #BEEFFF;*/
+	background-image: url('stardust.png');
 	padding: 10px;
 }
 
 .footer {
 	grid-area: f;
 	color: #420420;
-	background-color: #CAACAA;
+	/*background-color: #CAACAA;*/
 	padding: 5px;
 }
 
@@ -52,11 +54,6 @@
 	margin: 7px;
 }
 
-body, html {
-	margin: 0px;
-	padding: 0px;
-}
-
 div {
 }
 
@@ -74,4 +71,16 @@ input[type=checkbox]:checked + img {
 
 .lst_img {
 	border: 2px solid #696969;
+}
+
+.overlay_box {
+	float: left;
+}
+
+.overlay {
+	position: absolute;
+	float: left;
+	width: 640px;
+	height: 480px;
+	background-image: url('');
 }

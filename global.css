@@ -9,3 +9,12 @@ a:first-child {
 p {
 	text-indent: 20px;
 }
+
+body, html {
+	margin: 0px;
+	padding: 0px;
+}
+
+body {
+	background-image: url('qbkls.png');
+}
