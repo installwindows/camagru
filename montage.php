@@ -5,7 +5,15 @@ if (empty($_SESSION['user_id']))
 	header("Location: index.php");
 	die();
 }
-$page_title = "Photo Montage";
+if ($_SERVER["REQUEST_METHOD"] == "POST")
+{
+	$radio = htmlspecialchars($_POST['radio_image']);
+	$picture = htmlspecialchars($_POST['picture']);
+	echo "radio: " . $radio . "<br>";
+	echo "picture: " . $picture;
+	die();
+}
+$page_title = "Montage";
 $page_head = "<link rel='stylesheet' href='montage.css'>";
 ?>
 <?php include 'head.php' ?>
@@ -13,7 +21,7 @@ $page_head = "<link rel='stylesheet' href='montage.css'>";
 <?php include 'header.php' ?>
 	<div class='main'>
 		<h1>Montage</h1>
-		<form method="POST" action="montage.php">
+		<form name="alpha" method="POST" action="montage.php">
 			<div class="webcam">
 				<div class="overlay_box">
 					<div class="overlay"></div>
@@ -23,12 +31,13 @@ $page_head = "<link rel='stylesheet' href='montage.css'>";
 				<button id="snap" onclick="upload_montage()">SNAP!</button>
 			</div>
 			<canvas id="canvas" width="640" height="480"></canvas>
+			<input type="hidden" name="picture" value="">
 			<div class="image_list">
 				<span id="select_error"></span><br>
 				<?php
 				$files = array_diff(scandir('images'), ['.', '..']);
 				foreach ($files as $file) { ?>
-					<label for="<?= $file ?>"><input onchange="checkbox_onchange(this)" type="checkbox" name="<?= $file ?>" id="<?= $file ?>"><img class="lst_img" src="images/<?= $file ?>" height="120" width="160" onclick="document.querySelector('.overlay').style.backgroundImage = 'url(\'images/<?= $file ?>\')';"></label>
+					<label for="radio<?= $file ?>"><input type="radio" name="radio_image" value="<?= $file ?>" id="radio<?= $file ?>"><img class="lst_img" src="images/<?= $file ?>" height="120" width="160" onclick="document.querySelector('.overlay').style.backgroundImage = 'url(\'images/<?= $file ?>\')';"></label>
 				<?php } ?>
 			</div>
 		</form>
@@ -41,34 +50,23 @@ $page_head = "<link rel='stylesheet' href='montage.css'>";
 <script>
 function upload_montage()
 {
+	var form = document.forms['alpha'];
 	var canvas = document.getElementById('canvas');
-	var checked = document.querySelectorAll('input[type=checkbox]:checked');
-	if (canvas && checked.length)
+	var context = canvas.getContext('2d');
+	var video = document.getElementById('video');
+	var radio = document.querySelectorAll('input[type=radio]:checked');
+	if (canvas && radio.length)
 	{
+		context.drawImage(video, 0, 0, 640, 480);
 		var photo = canvas.toDataURL();
-		console.log(checked);
-		document.getElementById('select_error').innerHTML = "";
-		//POST to montage.php
+		form.elements['picture'].value = photo;
+		form.submit();
 	}
 	else
 	{
 		document.getElementById('select_error').innerHTML = "Sélectionnez au moins une image.";
 	}
 }
-
-function checkbox_onchange(checkbox)
-{
-	var checked = document.querySelectorAll('input[type=checkbox]:checked');
-	if (checked.length)
-	{
-		for (var i = 0; i < checked.length; i++)
-		{
-			checked[i].checked = false;
-		}
-	}
-	checkbox.checked = true;
-}
-
 </script>
 <script>
 var video = document.getElementById('video');
@@ -93,10 +91,4 @@ else
 		document.querySelector('.webcam').innerHTML = "Aucune webcam disponible.<br>" + no_webcam;
 	});
 }
-var canvas = document.getElementById('canvas');
-var context = canvas.getContext('2d');
-var video = document.getElementById('video');
-document.getElementById("snap").addEventListener("click", function() {
-	context.drawImage(video, 0, 0, 640, 480);
-});
 </script>
