@@ -19,6 +19,7 @@ $page_head = "<link rel='stylesheet' href='montage.css'>";
 					<div class="overlay"></div>
 					<video id="video" width="640" height="480" autoplay></video><br>
 				</div>
+				<br>
 				<button id="snap" onclick="upload_montage()">SNAP!</button>
 			</div>
 			<canvas id="canvas" width="640" height="480"></canvas>
