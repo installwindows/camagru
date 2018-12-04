@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="icon" type="image/png" href="favicon.png">
+	<link rel="stylesheet" href="css.css">
+	<style type="text/css">
+		html, body {
+			margin: 0;
+		}
+	</style>
+	<title>cool canvas</title>
+</head>
+<body>
+	<canvas id="cool_canvas" width="2000px" height="2000px" style=""></canvas>
+	<div id="palette"></div>
+	<script>
+
+
+function scale(px, py, width, height, zx = 3.5, zy = 2)
+{
+	var mx = 0.0;
+	var my = 0.0;
+
+	mx = (px * zx) / width - 2.5;
+	my = (py * zy) / height - 1.0;
+	return {x:mx, y:-my};
+}
+
+
+/*
+   f(z) = z^2 + c
+   i^2 = -1
+   z^2 = (a + bi)^2 = a^2 + 2abi - b^2
+   c = x + yi
+   f(z) = (real: a^2 - b^2 + x) + (imag: 2abi + yi)
+*/
+function mandelbrot(c, max_iteration)
+{
+	var z = {a: 0.0, b: 0.0};
+	
+	for (var i = 0; i < max_iteration; i++)
+	{
+		var real = z.a * z.a - z.b * z.b + c.x;
+		var imag = 2 * z.a * z.b + c.y;
+		z.a = real;
+		z.b = imag;
+		if (z.a + z.b >= 4)
+			break;
+	}
+	return i;
+}
+
+function generate_color_palette(size = 50, seed = 0x420420)
+{
+	var palette = new Array(size);
+	var r = seed >> 16 & 0xFF;
+	var g = seed >> 8 & 0xFF;
+	var b = seed & 0xFF;
+
+	for (var i = 0; i < size; i++)
+	{
+		r += 42 & 0xFF;
+		g += (i % 3 == 0 ? 21 : 0) & 0xFF;
+		b += (i % 2 == 0 ? 9 : 0) & 0xFF;
+		palette[i] = (((r << 16) | (g << 8)) | b) & 0xFFFFFF;
+	}
+	console.log(palette);
+	palette[size - 1] = 0x000000;
+	return palette;
+}
+
+function display_palette(palette)
+{
+	for (var i = 0; i < palette.length; i++)
+		document.getElementById('palette').innerHTML += "<div style='background-color: #" + palette[i].toString(16) + ";' height='15px' width='60px'>" + i + "</div>";
+}
+
+function generate_cool_canvas()
+{
+	var width = 1250;
+	var height = 500;
+	var canvas = document.getElementById('cool_canvas');
+	var x = canvas.getContext('2d');
+	var image = x.createImageData(width, height);
+	var max_iteration = 1000;
+	var palette = generate_color_palette(max_iteration);
+	//display_palette(palette);
+
+	for (var i = 0; i < width; i++)
+	{
+		for (var j = 0; j < height; j++)
+		{
+			var c = scale(i, j, width, height);
+			var n = mandelbrot(c, max_iteration);
+			//console.log('c: ' + c.x + ', ' + c.y + '  |  i: ' + i + '  |  j: ' + j + '  |  n: ' + n);
+			var point = j * width * 4 + i * 4;
+			image.data[point + 0] = palette[n - 1] >> 16 & 0xFF;
+			image.data[point + 1] = palette[n - 1] >> 8 & 0xFF;
+			image.data[point + 2] = palette[n - 1] & 0xFF;
+			image.data[point + 3] = 255;
+		}
+	}
+	x.putImageData(image, 0, 0);
+	
+}
+generate_cool_canvas();
+	</script>
+</body>
+</html>
