@@ -1,0 +1,110 @@
+<html>
+<head>
+<style>
+	#palette > div {
+		width: 90px;
+		height: 25px;
+		font-family: Courier;
+	}
+</style>
+<script src="libft.js"></script>
+</head>
+<body>
+<input id="color" type="text" value="FFFFFF">
+<button onclick="generate_random_palette(document.getElementById('color').value)">Random color palette</button>
+<hr>
+<div id="palette">
+</div>
+<script>
+function generate_random_palette(seed, size = 16)
+{
+	var palette = document.getElementById('palette');
+	seed = parseInt(seed, 16) & 0xFFFFFF;
+
+	for (var i = 0; i < size; i++)
+	{
+		var r = Math.floor(Math.random() * 255);
+		var g = Math.floor(Math.random() * 255);
+		var b = Math.floor(Math.random() * 255);
+
+		r = Math.floor((r + (seed >> 16 & 0xFF)) / 2);
+		g = Math.floor((g + (seed >> 8 & 0xFF)) / 2);
+		b = Math.floor((b + (seed & 0xFF)) / 2);
+
+		var style = "background-color: rgb(" + r + "," + g + "," + b + ");";
+		palette.innerHTML += "<div style='" + style + "'>#" + ft_pad((r << 16) | (g << 8) | b, 6, 16) + "</div>";
+	}
+}
+
+function hsv_to_rgb(hue, saturation, value)
+{
+	var r = 0;
+	var g = 0;
+	var b = 0;
+
+	hue = hue % 360;
+	saturation = saturation > 100 ? saturation % 100 : saturation;
+	value = value > 100 ? value % 100 : value;
+	var invert_saturation = Math.abs(100 - saturation) / 100;
+	if ((hue >= 0 && hue < 60) || hue == 360) //Red
+	{
+		var secondary = ((hue * 255) / 60) * (value / 100);
+		r = (value * 255) / 100;
+		g = secondary + (r - secondary) * invert_saturation;
+		b = r * invert_saturation;
+	}
+	else if (hue >= 60 && hue < 120) //Yellow
+	{
+		var secondary = ((120 - hue) / 60) * 255 * (value / 100);
+		g = (value * 255) / 100;
+		r = secondary + (g - secondary) * invert_saturation;
+		b = g * invert_saturation;
+	}
+	else if (hue >= 120 && hue < 180) //Green
+	{
+		var secondary = (Math.abs(180 - hue - 60) / 60) * 255 * (value / 100);
+		g = (value * 255) / 100;
+		b = secondary + (g - secondary) * invert_saturation;
+		r = g * invert_saturation;
+	}
+	else if (hue >= 180 && hue < 240) //Cyan
+	{
+		var secondary = (240 - hue) / 60 * 255 * (value / 100);
+		b = (value * 255) / 100;
+		g = secondary + (b - secondary) * invert_saturation;
+		r = b * invert_saturation;
+	}
+	else if (hue >= 240 && hue < 300) //Blue
+	{
+		var secondary = (Math.abs(300 - hue - 60) / 60) * 255 * (value / 100);
+		b = (value * 255) / 100;
+		g = b * invert_saturation;
+		r = secondary + (b - secondary) * invert_saturation;
+	}
+	else if (hue >= 300 && hue < 360) //Mangenta
+	{
+		var secondary = ((360 - hue) / 60) * 255 * (value / 100);
+		r = (value * 255) / 100;
+		b = secondary + (r - secondary) * invert_saturation;
+		g = r * invert_saturation;
+	}
+	return {r: Math.round(r), g: Math.round(g), b: Math.round(b)};
+}
+
+function generate_grandient(color, size = 200)
+{
+	var palette = new Array(size);
+	var hue = 0;
+	var sat = 100;
+	var value = 100;
+
+
+	for (var i = 0; i < size; i++)
+	{
+		hue++;
+	}
+}
+
+</script>
+</body>
+</html>

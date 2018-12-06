@@ -105,31 +105,28 @@ function generate_cool_canvas(width, height)
 	var image = x.createImageData(width, height);
 	var max_iteration = 1000;
 
-	var data = mandelbrot_data(width, height, max_iteration);
-	var total = 0;
-	for (var i = 0; i < max_iteration; i++)
-		total += data.histogram[i];
+	//var data = mandelbrot_data(width, height, max_iteration);
+	//var total = 0;
+	//for (var i = 0; i < max_iteration; i++)
+	//	total += data.histogram[i];
 	var palette = generate_color_palette(max_iteration);
 
 	for (var i = 0; i < width; i++)
 	{
 		for (var j = 0; j < height; j++)
 		{
-			var hue = 0.0;
-			for (var i = 0; i <= data.pixel[i][j]; i++)
-				hue += data.histogram[i] / total;
-			palette[hue];//??? TODO FIX MESS
-			/*
+			//var hue = 0.0;
+			//for (var i = 0; i <= data.pixel[i][j]; i++)
+			//	hue += data.histogram[i] / total;
+			//palette[hue];//??? TODO FIX MESS
 			var c = scale(i, j, width, height);
 			var n = mandelbrot(c, max_iteration);
-			histogram[n - 1]++;
 			//console.log('c: ' + c.x + ', ' + c.y + '  |  i: ' + i + '  |  j: ' + j + '  |  n: ' + n);
 			var point = j * width * 4 + i * 4;
 			image.data[point + 0] = palette[n - 1] >> 16 & 0xFF;
 			image.data[point + 1] = palette[n - 1] >> 8 & 0xFF;
 			image.data[point + 2] = palette[n - 1] & 0xFF;
 			image.data[point + 3] = 255;
-			*/
 		}
 	}
 
