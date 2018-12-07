@@ -1,7 +1,14 @@
 <html>
 <head>
 <style>
-	#palette > div {
+	.palette {
+		float: left;
+		padding: 5px;
+		width: 100px;
+		height: 400px;
+		overflow-y: auto;
+	}
+	.palette_elem {
 		width: 90px;
 		height: 25px;
 		font-family: Courier;
@@ -10,15 +17,16 @@
 <script src="libft.js"></script>
 </head>
 <body>
-<input id="color" type="text" value="FFFFFF">
-<button onclick="generate_random_palette(document.getElementById('color').value)">Random color palette</button>
+Seed: <input id="color" type="text" value="FFFFFF"> | 
+Size: <input id="size" type="text" value="16"> 
+<button onclick="get_palette('random', document.getElementById('color').value,document.getElementById('size').value)">Random pastel</button>
+<button onclick="get_palette('gradient', document.getElementById('color').value,document.getElementById('size').value)">Gradient</button>
 <hr>
-<div id="palette">
-</div>
+<div id="galerie"></div>
 <script>
 function generate_random_palette(seed, size = 16)
 {
-	var palette = document.getElementById('palette');
+	var palette = new Array(size);
 	seed = parseInt(seed, 16) & 0xFFFFFF;
 
 	for (var i = 0; i < size; i++)
@@ -30,10 +38,9 @@ function generate_random_palette(seed, size = 16)
 		r = Math.floor((r + (seed >> 16 & 0xFF)) / 2);
 		g = Math.floor((g + (seed >> 8 & 0xFF)) / 2);
 		b = Math.floor((b + (seed & 0xFF)) / 2);
-
-		var style = "background-color: rgb(" + r + "," + g + "," + b + ");";
-		palette.innerHTML += "<div style='" + style + "'>#" + ft_pad((r << 16) | (g << 8) | b, 6, 16) + "</div>";
+		palette[i] = {r: r, g: g, b: b};
 	}
+	return palette;
 }
 
 function hsv_to_rgb(hue, saturation, value)
@@ -91,7 +98,7 @@ function hsv_to_rgb(hue, saturation, value)
 	return {r: Math.round(r), g: Math.round(g), b: Math.round(b)};
 }
 
-function generate_grandient(color, size = 200)
+function generate_gradient(color, size = 200)
 {
 	var palette = new Array(size);
 	var hue = 0;
@@ -101,8 +108,40 @@ function generate_grandient(color, size = 200)
 
 	for (var i = 0; i < size; i++)
 	{
+		palette[i] = hsv_to_rgb(hue, sat, value);
 		hue++;
+		if (sat >= 50)
+			sat--;
+		if (sat < 50)
+			sat++;
+		if (value >= 70)
+			value--;
+		if (value < 70)
+			value++;
 	}
+	return palette;
+}
+
+function get_palette(type, seed, size = 16)
+{
+	var doc = document.getElementById('galerie');
+	var container = document.createElement('div');
+	var palette = [];
+	if (type === "random")
+		palette = generate_random_palette(seed, size);
+	else if (type === "gradient")
+		palette = generate_gradient(seed, size);
+
+	for (var i = 0; i < palette.length; i++)
+	{
+		var r = palette[i].r;
+		var g = palette[i].g;
+		var b = palette[i].b;
+		var style = "background-color: rgb(" + r + "," + g + "," + b + ");";
+		container.innerHTML += "<div class='palette_elem' style='" + style + "'>#" + ft_pad((r << 16) | (g << 8) | b, 6, 16) + "</div>";
+	}
+	container.setAttribute('class', 'palette');
+	doc.insertBefore(container, null);
 }
 
 </script>
