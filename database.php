@@ -209,4 +209,28 @@ function remove_task($id)
 	}
 }
 
+function create_new_montage($pic, $bg, $user_id)
+{
+	$b64 = substr($pic, strpos($pic, ',') + 1);
+	$image = base64_decode($b64);
+	$image_url = "montages/" . time() . ".png";
+	file_put_contents($image_url, $image);
+	$metadata = getimagesize($image_url);
+	if ($metadata === false || $metadata['mime'] !== "image/png")
+	{
+		unlink($image_url);
+		return false;
+	}
+	//TODO MERGE PIC AND BG
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("INSERT INTO montages (user_id, image) VALUES (:user_id, :image_url)");
+		$query->execute(array("user_id" => $user_id, "image_url" => $image_url));
+		return $pdo->lastInsertId();
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+	return false;
+}
+
 ?>

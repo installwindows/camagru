@@ -18,3 +18,11 @@ body, html {
 body {
 	background-image: url('qbkls.png');
 }
+
+.error {
+	color: red;
+}
+
+.success {
+	color: green;
+}

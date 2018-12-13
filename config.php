@@ -24,6 +24,25 @@ try {
 		task	TEXT,
 		data	TEXT
 	);");
+	$pdo->query("CREATE TABLE IF NOT EXISTS montages (
+		id		INTEGER	PRIMARY KEY,
+		user_id	INTEGER,
+		image	TEXT
+	);");
+	$pdo->query("CREATE TABLE IF NOT EXISTS comments (
+		id			INTEGER	PRIMARY KEY,
+		user_id		INTEGER,
+		montage_id	INTEGER,
+		message		TEXT
+	);");
+	$pdo->query("CREATE TABLE IF NOT EXISTS likes (
+		id			INTEGER	PRIMARY KEY,
+		user_id		INTEGER,
+		montage_id	INTEGER,
+		type		TEXT	NULL
+	);");
+
+	
 
 
 
