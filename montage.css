@@ -87,3 +87,13 @@ input[type=radio] + img {
 	height: 480px;
 	background-image: url('');
 }
+
+#videoElement {
+	width: 640px;
+	height: 480px;
+}
+
+.side img {
+	width: 160px;
+	height: 120px;
+}

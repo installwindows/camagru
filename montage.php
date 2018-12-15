@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	//die();
 	if (create_new_montage($canvas, $image, $user_id))
 	{
-		$upload_success = "HEY HEY YOU YOU CREATED A NEW MONTAGE &#x266b;";
+		$upload_success = "This was a triumph &#x266b;";
 	}
 	else
 	{
@@ -40,7 +40,7 @@ $page_head = "<link rel='stylesheet' href='montage.css'>";
 			<div class="webcam">
 				<div class="overlay_box">
 					<div class="overlay"></div>
-					<video id="video" width="640" height="480" autoplay></video><br>
+					<video autoplay="true" id="videoElement"></video><br>
 				</div>
 				<br>
 				<button id="snap" onclick="upload_montage()">SNAP!</button>
@@ -60,8 +60,35 @@ $page_head = "<link rel='stylesheet' href='montage.css'>";
 		</form>
 	</div>
 	<div class='side'>
-		side
+<?php
+		$montages = get_montages($user_id);
+		foreach ($montages as $montage)
+		{
+			echo "<img src='{$montage['image']}'>";
+		}
+?>
 	</div>
+
+<script>
+/*
+var no_webcam = `
+		<form method='POST' action='montage.php' enctype='multipart/form-data'>
+			Image: <input type='file' name='file_image'><br>
+			<input type='submit' value='FUSION!'>
+		</form>
+	`;
+ */
+		var videoElement = document.getElementById("videoElement");
+
+				console.log("video");
+		if (navigator.mediaDevices.getUserMedia) {       
+			navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
+				videoElement.srcObject = stream;
+			}).catch(function(err0r) {
+				console.log("No stream!");
+			});
+		}
+</script>
 <?php include 'footer.php' ?>
 
 <script>
@@ -70,7 +97,7 @@ function upload_montage()
 	var form = document.forms['alpha'];
 	var canvas = document.getElementById('canvas');
 	var context = canvas.getContext('2d');
-	var video = document.getElementById('video');
+	var video = document.getElementById('videoElement');
 	var radio = document.querySelectorAll('input[type=radio]:checked');
 	if (canvas && radio.length)
 	{
@@ -83,29 +110,5 @@ function upload_montage()
 	{
 		document.getElementById('select_error').innerHTML = "Sélectionnez au moins une image.";
 	}
-}
-</script>
-<script>
-var video = document.getElementById('video');
-/*
-var no_webcam = `
-		<form method='POST' action='montage.php' enctype='multipart/form-data'>
-			Image: <input type='file' name='file_image'><br>
-			<input type='submit' value='FUSION!'>
-		</form>
-	`;
- */
-if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia))
-{
-	document.querySelector('.webcam').innerHTML = "No webcam for you. Utilisez Firefox pour avoir accès à la caméra<br>" + no_webcam;
-}
-else
-{
-	navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-		video.srcObject = stream;
-		video.play();
-	}).catch (function(err){
-		document.querySelector('.webcam').innerHTML = "Aucune webcam disponible.<br>" + no_webcam;
-	});
 }
 </script>

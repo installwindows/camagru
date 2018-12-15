@@ -233,4 +233,17 @@ function create_new_montage($pic, $bg, $user_id)
 	return false;
 }
 
+function get_montages($user_id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("SELECT * FROM montages WHERE user_id = :user_id");
+		$query->execute(array("user_id" => $user_id));
+		$result = $query->fetchAll();
+		return $result;
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+}
+
 ?>
