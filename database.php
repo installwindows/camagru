@@ -209,7 +209,7 @@ function remove_task($id)
 	}
 }
 
-function create_new_montage($pic, $bg, $user_id)
+function create_new_montage($pic, $filter, $user_id)
 {
 	$b64 = substr($pic, strpos($pic, ',') + 1);
 	$image = base64_decode($b64);
@@ -221,7 +221,14 @@ function create_new_montage($pic, $bg, $user_id)
 		unlink($image_url);
 		return false;
 	}
-	//TODO MERGE PIC AND BG
+	$source = imagecreatefrompng("images/$filter");
+	if ($source === false)
+		return false;
+	$dest = imagecreatefrompng($image_url);
+	imagealphablending($source, true);
+	imagesavealpha($source, true);
+	imagecopy($dest, $source, 0, 0, 0, 0, 640, 480);
+	imagepng($dest, $image_url);
 	try {
 		$pdo = get_database_connection();
 		$query = $pdo->prepare("INSERT INTO montages (user_id, image) VALUES (:user_id, :image_url)");

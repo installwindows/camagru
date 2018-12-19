@@ -7,7 +7,7 @@
 
 .main {
 	grid-area: m;
-	color: #420420;
+	color: #FCE0FF;
 	/*background-color: #DEAD69;*/
 	background-image: url('pink dust.png');
 	padding: 10px;
@@ -94,6 +94,8 @@ input[type=radio] + img {
 }
 
 .side img {
+	margin: 2px;
+	border: 1px solid black;
 	width: 160px;
 	height: 120px;
 }
