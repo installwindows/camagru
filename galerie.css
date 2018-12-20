@@ -1,0 +1,6 @@
+.galerie img {
+	margin: 2px;
+	border: 1px solid black;
+	width: 160px;
+	height: 120px;
+}

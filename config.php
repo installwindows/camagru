@@ -16,30 +16,35 @@ try {
 		email			TEXT		UNIQUE,
 		username		TEXT		UNIQUE,
 		password		TEXT,
-		email_verified	INTEGER		DEFAULT	0
+		email_verified	INTEGER		DEFAULT	0,
+		date			INTEGER		DEFAULT CURRENT_TIMESTAMP
 	);");
 	$pdo->query("CREATE TABLE IF NOT EXISTS email_task (
-		id		TEXT	PRIMARY KEY,
-		user_id	INTEGER,
-		task	TEXT,
-		data	TEXT
+		id				TEXT		PRIMARY KEY,
+		user_id			INTEGER,
+		task			TEXT,
+		data			TEXT,
+		date			INTEGER		DEFAULT CURRENT_TIMESTAMP
 	);");
 	$pdo->query("CREATE TABLE IF NOT EXISTS montages (
-		id		INTEGER	PRIMARY KEY,
-		user_id	INTEGER,
-		image	TEXT
+		id				INTEGER		PRIMARY KEY,
+		user_id			INTEGER,
+		image			TEXT,
+		date			INTEGER		DEFAULT CURRENT_TIMESTAMP
 	);");
 	$pdo->query("CREATE TABLE IF NOT EXISTS comments (
-		id			INTEGER	PRIMARY KEY,
-		user_id		INTEGER,
-		montage_id	INTEGER,
-		message		TEXT
+		id				INTEGER		PRIMARY KEY,
+		user_id			INTEGER,
+		montage_id		INTEGER,
+		message			TEXT,
+		date			INTEGER		DEFAULT CURRENT_TIMESTAMP
 	);");
 	$pdo->query("CREATE TABLE IF NOT EXISTS likes (
-		id			INTEGER	PRIMARY KEY,
-		user_id		INTEGER,
-		montage_id	INTEGER,
-		type		TEXT	NULL
+		id				INTEGER		PRIMARY KEY,
+		user_id			INTEGER,
+		montage_id		INTEGER,
+		type			TEXT		NULL,
+		date			INTEGER		DEFAULT CURRENT_TIMESTAMP
 	);");
 
 	

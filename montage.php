@@ -61,7 +61,7 @@ $page_head = "<link rel='stylesheet' href='montage.css'>";
 	</div>
 	<div class='side'>
 <?php
-		$montages = get_montages($user_id);
+		$montages = get_montages_by_user_id($user_id);
 		foreach ($montages as $montage)
 		{
 			echo "<img src='{$montage['image']}'>";

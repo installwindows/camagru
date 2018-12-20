@@ -1,5 +1,5 @@
 <?php
-$DB_DSN = "sqlite:database.sqlite";
+$DB_DSN = "sqlite:db.sqlite";
 
 function get_database_connection()
 {
@@ -240,7 +240,7 @@ function create_new_montage($pic, $filter, $user_id)
 	return false;
 }
 
-function get_montages($user_id)
+function get_montages_by_user_id($user_id)
 {
 	try {
 		$pdo = get_database_connection();
@@ -253,4 +253,16 @@ function get_montages($user_id)
 	}
 }
 
+function get_montages($total, $start = 0)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("SELECT * FROM montages WHERE id >= :start LIMIT :total");
+		$query->execute(array("total" => $total,"start" => $start));
+		$result = $query->fetchAll();
+		return $result;
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+}
 ?>
