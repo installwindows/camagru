@@ -10,19 +10,28 @@ $page_head = "<link rel='stylesheet' href='galerie.css'>";
 <?php include 'header.php'; ?>
 <div class="galerie">
 <?php
-//TODO pagination
-$page = $_GET['page'];
+$page = abs(intval($_GET['page']));
 $total = 10;
-$start = intval($page) * $total;
+$start = $page * $total;
 
 $montages = get_montages($total, $start);
 foreach ($montages as $montage)
-{
-	echo "<img src='{$montage['image']}'>";
-}
+{?>
+<div class='montage'>
+<img src='<?= $montage['image']; ?>'>
+<form method="POST" action="galerie.php">
+	<button onclick="like(<?= $montage['id']; ?>)">J'aime</button>
+	<textarea name="comment"></textarea>
+	<input type="submit" value="Commenter">
+</form>
+</div>
+<?php }
 ?>
 </div>
 <div>
-<?= $start ?>
+<a href="galerie.php?page=<?= $page - 1 < 0 ? 0 : $page - 1; ?>">Précédente</a>
+ Page <?= $page; ?> 
+<a href="galerie.php?page=<?= $page + 1; ?>">Suivante</a>
 </div>
 <?php include 'footer.php'; ?>
+
