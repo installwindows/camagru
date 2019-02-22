@@ -60,9 +60,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 	}
 }
 $page_title = "Inscription à Camagru!";
+$page_head = "<link rel='stylesheet' href='index.css'>";
 ?>
 <?php include 'head.php'; ?>
+<div class="container">
 <?php include 'header.php'; ?>
+<div class="main">
 <h2>Inscription</h2>
 <form method="POST" action="inscription.php">
 <label for="email" class="<?php echo $email_error ? $label_class : ""; ?>">Courriel</label>: <input type="text" name="email" id="email" value="<?php echo $email; ?>"> <?php echo $email_error_message; ?><br>
@@ -70,4 +73,6 @@ $page_title = "Inscription à Camagru!";
 	<label for="password" class="<?php echo $password_error ? $label_class : ""; ?>">Password</label>: <input type="password" name="password" id="password" value="<?php echo $password; ?>"> <?php echo $password_error_message; ?><br>
 	<input type="submit" name="submit" value="Soumettre"><br>
 </form>
+</div>
 <?php include 'footer.php'; ?>
+</div>

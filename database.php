@@ -240,6 +240,19 @@ function create_new_montage($pic, $filter, $user_id)
 	return false;
 }
 
+function get_montage_by_id($id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("SELECT * FROM montages WHERE id = :id");
+		$query->execute(array("id" => $id));
+		$result = $query->fetchAll();
+		return $result;
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+}
+
 function get_montages_by_user_id($user_id)
 {
 	try {
@@ -253,16 +266,118 @@ function get_montages_by_user_id($user_id)
 	}
 }
 
-function get_montages($total, $start = 0)
+function get_montages()
 {
 	try {
 		$pdo = get_database_connection();
-		$query = $pdo->prepare("SELECT * FROM montages WHERE id >= :start LIMIT :total");
-		$query->execute(array("total" => $total,"start" => $start));
+		$query = $pdo->prepare("SELECT * FROM montages ORDER BY date DESC");
+		$query->execute();
 		$result = $query->fetchAll();
 		return $result;
 	} catch (Exception $e) {
 		echo $e->getMessage();
 	}
+}
+
+function get_comments($montage_id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("SELECT * FROM comments WHERE montage_id = :montage_id ORDER BY date DESC");
+		$query->execute(array("montage_id" => $montage_id));
+		$result = $query->fetchAll();
+		return $result;
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+}
+
+function add_comment($user_id, $montage_id, $message)
+{
+	if (empty(get_user_by_id($user_id)) || empty(get_montage_by_id($montage_id)))
+		return false;
+	if (empty($message))
+		return false;
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("INSERT INTO comments (user_id, montage_id, message) VALUES (:user_id, :montage_id, :message)");
+		$query->execute(array(
+			"user_id"		=> $user_id,
+			"montage_id"	=> $montage_id,
+			"message"		=> $message
+		));
+		return $pdo->lastInsertId();
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+	return false;
+}
+
+function get_likes($montage_id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("SELECT * FROM likes WHERE montage_id = :montage_id");
+		$query->execute(array("montage_id" => $montage_id));
+		$result = $query->fetchAll();
+		return $result;
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+}
+
+function do_i_like_this($user_id, $montage_id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("SELECT * FROM likes WHERE user_id = :user_id AND montage_id = :montage_id");
+		$query->execute(array("user_id" =>$user_id, "montage_id" => $montage_id));
+		$result = $query->fetchAll();
+		return !empty($result);
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+	return false;
+}
+
+function add_like($user_id, $montage_id, $type)
+{
+	if (empty(get_user_by_id($user_id)) || empty(get_montage_by_id($montage_id)))
+		return false;
+	if (empty($type))
+		return false;
+	if (!empty(do_i_like_this($user_id, $montage_id)))
+		return false;
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("INSERT INTO likes (user_id, montage_id, type) VALUES (:user_id, :montage_id, :type)");
+		$query->execute(array(
+			"user_id"		=> $user_id,
+			"montage_id"	=> $montage_id,
+			"type"		=> $type
+		));
+		return $pdo->lastInsertId();
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+	return false;
+}
+
+function remove_like($user_id, $montage_id)
+{
+	if (empty(get_user_by_id($user_id)) || empty(get_montage_by_id($montage_id)))
+		return false;
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("DELETE FROM likes WHERE user_id = :user_id AND montage_id = :montage_id");
+		$query->execute(array(
+			"user_id"		=> $user_id,
+			"montage_id"	=> $montage_id
+		));
+		return true;
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+	return false;
 }
 ?>

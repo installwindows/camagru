@@ -1,4 +1,12 @@
-a:first-child {
+.header a {
+	color: blue;
+	
+}
+.header a:visited {
+	color: purple;
+	
+}
+.header a:first-child {
 	color: black;
 	
 }
@@ -25,4 +33,12 @@ body {
 
 .success {
 	color: green;
+}
+
+a {
+	color: #fcf2fc;
+}
+
+a:visited {
+	color: #f2e3f2;
 }

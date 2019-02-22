@@ -57,4 +57,6 @@ try {
 }
 
 populate();
+
+mkdir('montages');
 ?>
