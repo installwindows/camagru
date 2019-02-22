@@ -57,6 +57,7 @@ if (isset($_SESSION['user_id']))
 else
 {
 	header("Location: connexion.php");
+	die();
 }
 $page_title = "Gestion du compte";
 $page_head = "<link rel='stylesheet' href='index.css'>";

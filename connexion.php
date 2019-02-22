@@ -35,7 +35,6 @@ $page_head = "<link rel='stylesheet' href='index.css'>";
 <div class="container">
 <?php include 'header.php'; ?>
 <div class="main">
-<?php include 'header.php'; ?>
 <h2>Connexion</h2>
 <form method="POST" action="connexion.php">
 	Nom d'utilisateur: <input type="text" name="username" value="<?php echo $username; ?>"><br>

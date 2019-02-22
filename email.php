@@ -3,6 +3,7 @@ include 'database.php';
 if (isset($_GET["id"]))
 {
 	$id = $_GET["id"];
+	$message = "";
 	try {
 		$pdo = get_database_connection();
 		$query = $pdo->prepare("SELECT * FROM email_task WHERE id = :id");
@@ -16,20 +17,21 @@ if (isset($_GET["id"]))
 			{
 			case "change_email":
 				change_email($user['id'], $data);
-				echo "Courriel mis à jour";
+				$message = "Courriel mis à jour";
 				break;
 			case "inscription_email":
 				$query = $pdo->prepare("UPDATE users SET email_verified = 1 WHERE id = :user_id");
 				$query->execute(array("user_id" => $user['id']));
-				echo "Courriel validé.";
+				$message = "Courriel validé.";
 				break;
 			default:
-				echo "NOTHIGN TO DO HERE";
+				$message = "NOTHIGN TO DO HERE";
 				die();
 			}
 			$query = $pdo->prepare("DELETE FROM email_task WHERE id = :id");
 			$query->execute(array("id" => $id));
 			header("Refresh:3; url=index.php");
+			echo $message;
 		}
 		else
 			header("Location: index.php");
