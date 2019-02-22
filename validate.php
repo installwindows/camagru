@@ -16,7 +16,8 @@ function validate_username($username)
 
 function validate_password($password)
 {
-	if (strlen($password) > 255)
+	$len = strlen($password); 
+	if ($len < 1 || $len > 255)
 		return false;
 	return true;
 }

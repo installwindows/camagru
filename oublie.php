@@ -3,8 +3,13 @@ include 'database.php';
 include 'validate.php';
 session_start();
 if (isset($_SESSION["user_id"]))
+{
 	header("Location: compte.php");
+	die();
+}
 $err_msg = "";
+$password_error = "";
+$was_and_error_so_here_is_the_id = "";
 if ($_SERVER['REQUEST_METHOD'] == "POST")
 {
 	if (isset($_POST['email']))
@@ -14,8 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 		{
 			if ($user = get_user_by_email($email))
 			{
-				echo "Le <abbr title='Département des Mots de Passe Perdus'>DMPP</abbr> enverra le résultat de ses recherches sous peu.";
 				send_task($user['id'], "password_lost");
+				header("refresh:6; url=connexion.php");
+				echo "Le <abbr title='Département des Mots de Passe Perdus'>DMPP</abbr> enverra le résultat de ses recherches sous peu à l'adresse indiquée.<br><a href='connection.php'>Go back!</a>";
+				die();
 			}
 			else
 			{
@@ -32,28 +39,25 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 		$id = $_POST['id'];
 		$password = $_POST['password'];
 		if (!validate_password($password))
-			$err_msg = "Bad password.";
+		{
+			$password_error = "Bad password.";
+			$was_and_error_so_here_is_the_id = $_POST['id'];
+		}
 		else if ($task = get_email_task($id))
 		{
 			change_password($task['user_id'], hash('whirlpool', $password));
-			echo "Password changed!";
 			remove_task($id);
 			header("refresh:3; url=connexion.php");
+			echo "Password changed!";
 			die();
 		}
 		else
-			$err_msg =  "SCRAM!!!";
+		{
+			echo "id invalide! Resuiver le lien envoyé à votre email ou refaite le processus d'oubliation de mot de passe.";
+			die();
+		}
 	}
 }
-if (isset($_GET['id']))
-{
-	$id = htmlspecialchars($_GET['id']);?>
-	<form method="POST" action="oublie.php">
-		Entrez le nouveau mot de passe: <input type="password" name="password"><br>
-		<input type="hidden" name="id" value="<?php echo $id; ?>">
-		<input type="submit" value="Confirmer">
-	</form>
-<?php }
 ?>
 <!DOCTYPE html>
 <html>
@@ -63,6 +67,16 @@ if (isset($_GET['id']))
 	<title>Mot de passe oublié</title>
 </head>
 <body>
+<?php if (isset($_GET['id']) || !empty($password_error))
+{
+	$id = htmlspecialchars($_GET['id']);?>
+	<form method="POST" action="oublie.php">
+		<?php echo "$password_error<br>"; ?>
+		Entrez le nouveau mot de passe: <input type="password" name="password"><br>
+		<input type="hidden" name="id" value="<?php echo empty($id) ? $was_and_error_so_here_is_the_id : $id; ?>">
+		<input type="submit" value="Confirmer">
+	</form>
+<?php } else { ?>
 <p>Formulaire pour rejoindre le département des mots de passe perdus.<p>
 <form method="POST" action="oublie.php">
 	<?php echo "$err_msg<br>"; ?>
@@ -70,5 +84,6 @@ if (isset($_GET['id']))
 	Détails concernant la disparition: <textarea></textarea><br>
 	<input type="submit" value="Envoyer">
 </form>
+<?php } ?>
 </body>
 </html>

@@ -22,12 +22,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 	if (!validate_username($username))
 	{
 		$username_error = true;
-		$username_error_message = "Le nom d'utilisateur ne respecte pas la syntaxe arbitraire de 3 à 32 caractères de long composés de symboles alphanumérique.";
+		$username_error_message = "Le nom d'utilisateur ne respecte pas la syntaxe arbitraire de 3 à 32 caractères de longs composés de symboles alphanumériques.";
 	}
 	if (!validate_password($password))
 	{
 		$password_error = true;
-		$password_error_message = "Le mot de passe ne doit pas dépasser 255 caractères.";
+		$password_error_message = "Le mot de passe doit contenir au moins un caractère et ne doit pas dépasser 255 caractères.";
 	}
 	if (!empty(get_user_by_email($email)))
 	{
@@ -41,16 +41,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 	}
 	if ($email_error || $username_error || $password_error)
 	{
-		echo "<h2>Input error</h2>";
 		$label_class = "label_error";
 	}
 	else
 	{
 		if ($user_id = create_user($email, $username, $password))
 		{
-			echo "Veuillez activer votre compte en suivant le lien envoyé à celui-ci.";
 			send_task($user_id, "inscription_email");
 			header("Refresh:3; url=index.php");
+			echo "Veuillez activer votre compte en suivant le lien envoyé à celui-ci.";
 			die();
 		}
 		else

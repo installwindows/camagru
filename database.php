@@ -162,20 +162,24 @@ function send_task($user_id, $task, $data = "")
 		break;
 	case "change_email":
 		$email = $data;
-		$subject = "ALLO ICI CAMAGRULL! Changement de EMAILE!";
+		$subject = "Camagru: Vous voulez changer d'adresse email?";
 		$message = "Cliquez sur l'unique lien de ce courriel pour changer votre mot de passe.<br>";
 		$message .= "<a href='$verification_url'>Je suis l'unique lien de ce courriel.</a>";
 		break;
 	case "password_lost":
 		$verification_url = "http://" . $_SERVER['HTTP_HOST'] . "/oublie.php?id=" . $id;
-		$subject = "{$user['username']}, mot de passe oublié";
-		$message = "<p>Résultat de notre recherche: que dalle</p>Activez ceci: &#10087; <a href='$verification_url'>HYPERLIEN!</a> &#9753; pour le remplacer.";
+		$subject = "Camagruiste {$user['username']}, mot de passe oublié?";
+		$message = "<p>Résultat de notre recherche: Une longue chaîne de caractère hexadécimale ne faisant aucun sens...</p>Activez ceci: &#10087; <a href='$verification_url'>HYPERLIEN!</a> &#9753; pour le remplacer.";
 		break;
 	}
 	mail($email, $subject, $message, $headers);
-	$pdo = get_database_connection();
-	$query = $pdo->prepare("INSERT INTO email_task VALUES (:id, :user_id, :task, :data)");
-	$query->execute(array("id" => $id, "user_id" => $user['id'], "task" => $task, "data" => $data));
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("INSERT INTO email_task (id, user_id, task, data) VALUES (:id, :user_id, :task, :data)");
+		$query->execute(array("id" => $id, "user_id" => $user['id'], "task" => $task, "data" => $data));
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
 }
 
 function get_email_task($id)
