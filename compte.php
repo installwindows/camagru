@@ -59,9 +59,12 @@ else
 	header("Location: connexion.php");
 }
 $page_title = "Gestion du compte";
+$page_head = "<link rel='stylesheet' href='index.css'>";
 ?>
 <?php include 'head.php'; ?>
+<div class="container">
 <?php include 'header.php'; ?>
+<div class="main">
 <div>
 Adress courriel: <?= $user['email']; ?><br>
 Nom d'utilisateur: <?= $user['username']; ?><br>
@@ -82,4 +85,6 @@ Nom d'utilisateur: <?= $user['username']; ?><br>
 	<input type="submit" name="update_password" value="Confirmer">
 </form>
 <div><?php echo $password_message; ?></div>
+</div>
 <?php include 'footer.php'; ?>
+</div>

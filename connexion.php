@@ -29,8 +29,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 	}
 }
 $page_title = "Connexion";
+$page_head = "<link rel='stylesheet' href='index.css'>";
 ?>
 <?php include 'head.php'; ?>
+<div class="container">
+<?php include 'header.php'; ?>
+<div class="main">
 <?php include 'header.php'; ?>
 <h2>Connexion</h2>
 <form method="POST" action="connexion.php">
@@ -42,4 +46,6 @@ $page_title = "Connexion";
 	<input type="submit" name="submit"><br>
 	<?php echo $error_message; ?>
 </form>
+</div>
 <?php include 'footer.php'; ?>
+</div>
