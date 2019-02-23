@@ -17,6 +17,8 @@ try {
 		username		TEXT		UNIQUE,
 		password		TEXT,
 		email_verified	INTEGER		DEFAULT	0,
+		notify_like		INTEGER		DEFAULT	1,
+		notify_comment	INTEGER		DEFAULT	1,
 		date			INTEGER		DEFAULT CURRENT_TIMESTAMP
 	);");
 	$pdo->query("CREATE TABLE IF NOT EXISTS email_task (

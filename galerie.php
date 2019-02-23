@@ -7,9 +7,16 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 {
 	if ($_POST['like'] == "J'aime")
 	{
-		if (add_like($user_id, $_POST['montage_id'], "like") == false)
-		{
+		$id = add_like($user_id, $_POST['montage_id'], "like");
+		if ($id === false)
 			$error_message = "Not like this";
+		else
+		{
+			$data = get_like_by_id($id);
+			$montage = get_montage_by_id($_POST['montage_id']);
+			$target_user = get_usesr_by_id($montage['user_id']);
+			if ($target_user['notify_like']);
+				notify_user($montage['user_id'], "like", $data);
 		}
 	}
 	else if ($_POST['like'] == "Je n'aime plus")
@@ -26,9 +33,19 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 		{
 			$error_message = "Commentaire vide!";
 		}
-		else if (add_comment($user_id, $_POST['montage_id'], $comment) == false)
+		else
 		{
-			$error_message = "It was hidden for a reason.";
+			$id = add_comment($user_id, $_POST['montage_id'], $comment);
+			if ($id === false)
+				$error_message = "It was hidden for a reason.";
+			else
+			{
+				$data = get_comment_by_id($id);
+				$montage = get_montage_by_id($_POST['montage_id']);
+				$target_user = get_usesr_by_id($montage['user_id']);
+				if ($target_user['notify_comment']);
+					notify_user($montage['user_id'], "comment", $data);
+			}
 		}
 	}
 }

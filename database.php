@@ -296,6 +296,19 @@ function get_comments($montage_id)
 	}
 }
 
+function get_comment_by_id($id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("SELECT * FROM comments WHERE id = :id");
+		$query->execute(array("id" => $id));
+		$result = $query->fetchAll();
+		return empty($results) ? $results : $results[0];
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+}
+
 function add_comment($user_id, $montage_id, $message)
 {
 	if (empty(get_user_by_id($user_id)) || empty(get_montage_by_id($montage_id)))
@@ -325,6 +338,19 @@ function get_likes($montage_id)
 		$query->execute(array("montage_id" => $montage_id));
 		$result = $query->fetchAll();
 		return $result;
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+}
+
+function get_like_by_id($id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("SELECT * FROM likes WHERE id = :id");
+		$query->execute(array("id" => $id));
+		$result = $query->fetchAll();
+		return empty($results) ? $results : $results[0];
 	} catch (Exception $e) {
 		echo $e->getMessage();
 	}
@@ -383,5 +409,47 @@ function remove_like($user_id, $montage_id)
 		echo $e->getMessage();
 	}
 	return false;
+}
+
+function update_user_notify($user_id, $type, $value)
+{
+	try {
+		$pdo = get_database_connection();
+		if ($type == "like")
+			$query = $pdo->prepare("UPDATE users SET notify_like = :value WHERE id = :user_id");
+		else if ($type == "comment")
+			$query = $pdo->prepare("UPDATE users SET notify_comment = :value WHERE id = :user_id");
+		else
+			return false;
+		$query->execute(array("value" => $value, "user_id" => $user_id));
+	} catch (Exception $e) {
+		echo $e->getMessage();
+		die();
+	}
+	return true;
+}
+
+function notify_user($user_id, $type, $data)
+{
+	$subject = "";
+	$message = "";
+	$user = get_user_by_id($user_id);
+	$user2 = get_user_by_id($data['user_id']);
+	if ($type == "like")
+	{
+		$subject = "{$user2['username']} aime l'un de vos montages!";
+		$message = "Votre <a href=''>montage</a> est aimé par le Camagruiste {$user2['username']}!";
+	}
+	else if ($type == "comment")
+	{
+		$subject = "{$user2['username']} a laissé un commentaire sur l'un de vos montages!";
+		$message = "Je cite: « {$data['message']} » - {$user2['username']}, faisant référence à votre <a href=''>montage</a>.";
+	}
+	else
+		return false;
+	$headers = "Content-Type: text/html; charset=UTF-8\r\n";
+	$email = $user['email'];
+	mail($email, $subject, $message, $headers);
+	return true;
 }
 ?>
