@@ -40,7 +40,7 @@ $page_head = "<link rel='stylesheet' href='montage.css'>";
 			<div class="webcam">
 				<div class="overlay_box">
 					<div class="overlay"></div>
-					<video autoplay="true" id="videoElement"></video><br>
+					<!--<video autoplay="true" id="videoElement"></video><br>-->
 				</div>
 				<br>
 				<button id="snap" onclick="upload_montage()">SNAP!</button>

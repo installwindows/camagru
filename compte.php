@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SESSION['user_id']))
 			$email_message = "Courriel déjà utilisé.";
 		}
 	}
-	if (isset($_POST['update_username']))
+	else if (isset($_POST['update_username']))
 	{
 		$username = $_POST['username'];
 		if (!validate_username($username))
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SESSION['user_id']))
 		else
 			$username_message = "Nom d'utilisateur déjà utilisé";
 	}
-	if (isset($_POST['update_password']))
+	else if (isset($_POST['update_password']))
 	{
 		$password = $_POST['password'];
 		if (!validate_password($password))
@@ -47,6 +47,25 @@ if ($_SERVER['REQUEST_METHOD'] == "POST" && isset($_SESSION['user_id']))
 		{
 			change_password($user['id'], hash('whirlpool', $password));
 			$username_message = "Huge success!";
+		}
+	}
+	else if (isset($_POST['update_notification']))
+	{
+		if ($_POST['email_notification_like'] == "ok")
+		{
+			update_user_notify($user['id'], "like", 1);
+		}
+		else
+		{
+			update_user_notify($user['id'], "like", 0);
+		}
+		if ($_POST['email_notification_comment'] == "ok")
+		{
+			update_user_notify($user['id'], "comment", 1);
+		}
+		else
+		{
+			update_user_notify($user['id'], "comment", 0);
 		}
 	}
 }
@@ -84,6 +103,12 @@ Nom d'utilisateur: <?= $user['username']; ?><br>
 <form method="POST" action="compte.php">
 	Changer mot de passe: <input type="password" name="password">
 	<input type="submit" name="update_password" value="Confirmer">
+</form>
+<form method="POST" action="compte.php">
+	Recevoir des courriels:<br>
+	<input type="checkbox" name="email_notification_like" value="ok" <?php if ($user['notify_like']) echo "checked"; ?>> Mention J'aime<br>
+	<input type="checkbox" name="email_notification_comment" value="ok" <?php if ($user['notify_comment']) echo "checked"; ?>> Commentaire<br>
+	<input type="submit" name="update_notification" value="Confirmer">
 </form>
 <div><?php echo $password_message; ?></div>
 </div>
