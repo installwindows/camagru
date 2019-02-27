@@ -208,36 +208,59 @@ function remove_task($id)
 		$pdo = get_database_connection();
 		$query = $pdo->prepare("DELETE FROM email_task WHERE id = :id");
 		$query->execute(array("id" => $id));
+		//TODO remove likes and comments too
 	} catch (Exception $e) {
 		echo $e->getMessage();
 	}
 }
 
-function create_new_montage($pic, $filter, $user_id)
+function create_new_montage($image_url, $filter, $user_id)
 {
-	$b64 = substr($pic, strpos($pic, ',') + 1);
-	$image = base64_decode($b64);
-	$image_url = "montages/" . time() . ".png";
-	file_put_contents($image_url, $image);
+	$img = imagecreatefromstring(file_get_contents($image_url));
+	if ($img === false)
+		return false;
+	$img = imagescale($img, 640, 480);
+	imagepng($img, "output.png");
+	/*
 	$metadata = getimagesize($image_url);
 	if ($metadata === false || $metadata['mime'] !== "image/png")
 	{
 		unlink($image_url);
 		return false;
 	}
+	 */
 	$source = imagecreatefrompng("images/$filter");
 	if ($source === false)
 		return false;
-	$dest = imagecreatefrompng($image_url);
+	//$dest = imagecreatefrompng($image_url);
+	$dest = imagecreatefrompng("output.png");
+	if ($dest === false)
+		return false;
 	imagealphablending($source, true);
 	imagesavealpha($source, true);
 	imagecopy($dest, $source, 0, 0, 0, 0, 640, 480);
-	imagepng($dest, $image_url);
+	$url = "montages/" . time() . ".png";
+	imagepng($dest, $url);
 	try {
 		$pdo = get_database_connection();
 		$query = $pdo->prepare("INSERT INTO montages (user_id, image) VALUES (:user_id, :image_url)");
-		$query->execute(array("user_id" => $user_id, "image_url" => $image_url));
+		$query->execute(array("user_id" => $user_id, "image_url" => $url));
 		return $pdo->lastInsertId();
+	} catch (Exception $e) {
+		echo $e->getMessage();
+	}
+	return false;
+}
+
+function remove_montage($montage_id)
+{
+	try {
+		$pdo = get_database_connection();
+		$query = $pdo->prepare("DELETE FROM montages WHERE id = :montage_id");
+		$query->execute(array(
+			"montage_id"	=> $montage_id
+		));
+		return true;
 	} catch (Exception $e) {
 		echo $e->getMessage();
 	}
@@ -250,8 +273,8 @@ function get_montage_by_id($id)
 		$pdo = get_database_connection();
 		$query = $pdo->prepare("SELECT * FROM montages WHERE id = :id");
 		$query->execute(array("id" => $id));
-		$result = $query->fetchAll();
-		return $result;
+		$results = $query->fetchAll();
+		return empty($results) ? $results : $results[0];
 	} catch (Exception $e) {
 		echo $e->getMessage();
 	}
@@ -302,7 +325,7 @@ function get_comment_by_id($id)
 		$pdo = get_database_connection();
 		$query = $pdo->prepare("SELECT * FROM comments WHERE id = :id");
 		$query->execute(array("id" => $id));
-		$result = $query->fetchAll();
+		$results = $query->fetchAll();
 		return empty($results) ? $results : $results[0];
 	} catch (Exception $e) {
 		echo $e->getMessage();
@@ -349,7 +372,7 @@ function get_like_by_id($id)
 		$pdo = get_database_connection();
 		$query = $pdo->prepare("SELECT * FROM likes WHERE id = :id");
 		$query->execute(array("id" => $id));
-		$result = $query->fetchAll();
+		$results = $query->fetchAll();
 		return empty($results) ? $results : $results[0];
 	} catch (Exception $e) {
 		echo $e->getMessage();

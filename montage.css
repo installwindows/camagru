@@ -1,14 +1,12 @@
 .header {
 	grid-area: h;
 	color: #420420;
-	/*background-color: #ABCDEF;*/
 	padding: 5px;
 }
 
 .main {
 	grid-area: m;
 	color: #FCE0FF;
-	/*background-color: #DEAD69;*/
 	background-image: url('pink dust.png');
 	padding: 10px;
 }
@@ -16,15 +14,15 @@
 .side {
 	grid-area: s;
 	color: #012345;
-	/*background-color: #BEEFFF;*/
 	background-image: url('stardust.png');
 	padding: 10px;
+	overflow: scroll;
+	max-height: 92vh;
 }
 
 .footer {
 	grid-area: f;
 	color: #420420;
-	/*background-color: #CAACAA;*/
 	padding: 5px;
 }
 
@@ -42,16 +40,23 @@
 @media screen and (max-width: 1000px) {
 	.container {
 		grid-template-areas:
-			"h h h h h h h h h"
+			". h h h h h h h ."
 			"m m m m m m m m m"
 			"s s s s s s s s s"
-			"f f f f f f f f f";
+			". f f f f f f f .";
+		grid-template-columns: repeat(9, 1fr);
+		grid-template-rows: 33px auto 300px 33px;
+		min-height: 100vh;
 	}
 }
 
 .webcam {
 	float: left;
 	margin: 7px;
+}
+
+#videoElement {
+	object-fit: cover;
 }
 
 div {
