@@ -5,7 +5,9 @@ $user_id = $_SESSION['user_id'];
 $error_message = "";
 if ($_SERVER['REQUEST_METHOD'] == "POST")
 {
-	if ($_POST['like'] == "J'aime")
+	if (!isset($_SESSION['user_id']))
+		$error_message = "Vous devez vous connecter!";
+	else if ($_POST['like'] == "J'aime")
 	{
 		$id = add_like($user_id, $_POST['montage_id'], "like");
 		if ($id === false)
@@ -14,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 		{
 			$data = get_like_by_id($id);
 			$montage = get_montage_by_id($_POST['montage_id']);
-			$target_user = get_usesr_by_id($montage['user_id']);
+			$target_user = get_user_by_id($montage['user_id']);
 			if ($target_user['notify_like']);
 				notify_user($montage['user_id'], "like", $data);
 		}
@@ -42,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 			{
 				$data = get_comment_by_id($id);
 				$montage = get_montage_by_id($_POST['montage_id']);
-				$target_user = get_usesr_by_id($montage['user_id']);
+				$target_user = get_user_by_id($montage['user_id']);
 				if ($target_user['notify_comment']);
 					notify_user($montage['user_id'], "comment", $data);
 			}

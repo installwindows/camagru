@@ -2,7 +2,10 @@
 include 'database.php';
 session_start();
 if (isset($_SESSION['user_id']))
+{
 	header("Location: compte.php");
+	die();
+}
 $error_message = "";
 $username = "";
 $password = "";

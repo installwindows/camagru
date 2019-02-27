@@ -1,100 +1,156 @@
 <?php
-session_start();
 include 'database.php';
-$user_id = $_SESSION['user_id'];
-if (empty($user_id))
+session_start();
+if (isset($_SESSION["user_id"]))
+{
+	$user = get_user_by_id($_SESSION["user_id"]);
+}
+else
 {
 	header("Location: connexion.php");
 	die();
 }
-
+$error_message = "";
 $upload_error = "";
 $upload_success = "";
 $select_error = "";
-if ($_SERVER["REQUEST_METHOD"] == "POST")
+if ($_SERVER['REQUEST_METHOD'] == 'POST')
 {
-	$image = htmlspecialchars($_POST['radio_image']);
-	$canvas = htmlspecialchars($_POST['picture']);
-	//TODO check if image exist
-	//echo "radio: " . $image . "<br>";
-	//echo "picture: " . $canvas;
-	//die();
-	if (create_new_montage($canvas, $image, $user_id))
+	if (isset($_POST['remove_montage']))
 	{
-		$upload_success = "This was a triumph &#x266b;";
+		$montage_to_delete_id = $_POST['montage_to_delete'];
+		$montage = get_montage_by_id($montage_to_delete_id);
+		if (!empty($montage) && $montage['user_id'] == $user['id'])
+		{
+			remove_montage($montage['id']);
+		}
+		else
+		{
+			$error_message = "Impossible de delet ce montage :(";
+		}
 	}
 	else
 	{
-		$upload_error = "Could not upload the image. Please try again senpai!";
+		//print_r($_POST);
+		$filter = htmlspecialchars($_POST['radio_image']);
+		$image_url = "";
+		if (empty($_POST['radio_image']))
+			$select_error = "Sélectionnez un filtre.";
+		else if (!file_exists("images/$filter"))
+			$error_message = "Filtre invalide!";
+		else if (isset($_POST['file_form']))
+		{
+			if (isset($_FILES['upload_image']) && $_FILES['upload_image']['error'] === UPLOAD_ERR_OK)
+				$image_url = $_FILES['upload_image']['tmp_name'];
+			else if (isset($_FILES['upload_image']) && $_FILES['upload_image']['error'] > 0)
+			{
+				$error_message = "Impossible d'utiliser ce fichier!";
+			}
+		}
+		else if (isset($_POST['webcam_form']))
+		{
+			$canvas = htmlspecialchars($_POST['picture']);
+			$b64 = substr($canvas, strpos($canvas, ',') + 1);
+			$image = base64_decode($b64);
+			//$image_url = "montages/" . time() . ".png";
+			$image_url = "montages_tmp" . time() . ".png";
+			file_put_contents($image_url, $image);
+		}
+		else
+		{
+			$error_message = "Utilisez un formulaire!";
+		}
+		if (!empty($image_url))
+		{
+			if (create_new_montage($image_url, $filter, $user['id']))
+				$upload_success = "This was a triumph &#x266b;";
+			else
+				$upload_error = "Could not upload the image. Please try again senpai!";
+			unlink($image_url);
+		}
 	}
 }
 $page_title = "Montage";
-$page_head = "<link rel='stylesheet' href='montage.css'>";
+$page_head = "<link rel='stylesheet' href='montage.css'><link rel='stylesheet' href='m2.css'>";
 ?>
 <?php include 'head.php' ?>
 <div class='container'>
 <?php include 'header.php' ?>
-	<div class='main'>
-		<h1>Montage</h1>
-		<form name="alpha" method="POST" action="montage.php">
-			<div class="webcam">
-				<div class="overlay_box">
-					<div class="overlay"></div>
-					<!--<video autoplay="true" id="videoElement"></video><br>-->
-				</div>
-				<br>
-				<button id="snap" onclick="upload_montage()">SNAP!</button>
-				<span class="error" id="upload_error"><?= $upload_error ?></span>
-				<span class="success" id="upload_success"><?= $upload_success ?></span>
-			</div>
-			<canvas id="canvas" width="640" height="480"></canvas>
-			<input type="hidden" name="picture" value="">
-			<div class="image_list">
-				<span id="select_error"></span><br>
-				<?php
-				$files = array_diff(scandir('images'), ['.', '..']);
-				foreach ($files as $file) { ?>
-					<label for="radio<?= $file ?>"><input type="radio" name="radio_image" value="<?= $file ?>" id="radio<?= $file ?>"><img class="lst_img" src="images/<?= $file ?>" height="120" width="160" onclick="document.querySelector('.overlay').style.backgroundImage = 'url(\'images/<?= $file ?>\')';"></label>
-				<?php } ?>
-			</div>
-		</form>
+<div class='main'>
+<div id="webcam_available" hidden>
+	<div class="webcam">
+		<div class="overlay_box">
+			<div class="overlay"></div>
+			<video autoplay="true" id="videoElement"></video><br>
+		</div>
 	</div>
-	<div class='side'>
+	<canvas id="canvas" width="640" height="480" hidden></canvas>
+	<button id="snap" onclick="upload_montage()">SNAP!</button>
+	<form id="webcam_form" method="POST" action="montage.php" enctype='multipart/form-data'>
+		<input type="hidden" name="picture" value="">
+		<input name="webcam_form" type='hidden' value='ok'>
+	</form>
+</div>
+<div id="webcam_unavailable" hidden>
+	<form id="file_form" method="POST" action="montage.php" enctype='multipart/form-data'>
+		Sélection d'une image: <input type='file' name='upload_image'><br>
+		<input name="file_form" type='submit' value='FUSION!'>
+	</form>
+</div>
+<div id="error_message">
+<?= $error_message ?>
+<span class="error" id="upload_error"><?= $upload_error ?></span>
+<span class="success" id="upload_success"><?= $upload_success ?></span>
+</div>
+<div class="image_list">
+	<span id="select_error"></span><br>
+	<?php
+	$files = array_diff(scandir('images'), ['.', '..']);
+	foreach ($files as $file) { ?>
+		<label for="radio<?= $file ?>"><input form="" type="radio" name="radio_image" value="<?= $file ?>" id="radio<?= $file ?>"><img class="lst_img" src="images/<?= $file ?>" height="120" width="160" onclick="document.querySelector('.overlay').style.backgroundImage = 'url(\'images/<?= $file ?>\')';"></label>
+	<?php } ?>
+</div>
+</div>
+<div class='side'>
 <?php
-		$montages = get_montages_by_user_id($user_id);
-		foreach ($montages as $montage)
-		{
-			echo "<img src='{$montage['image']}'>";
-		}
-?>
-	</div>
-
-<script>
-/*
-var no_webcam = `
-		<form method='POST' action='montage.php' enctype='multipart/form-data'>
-			Image: <input type='file' name='file_image'><br>
-			<input type='submit' value='FUSION!'>
+	$montages = get_montages_by_user_id($user['id']);
+	foreach (array_reverse($montages) as $montage)
+	{ ?>
+		<img src='<?= $montage['image'] ?>'>
+		<form method="POST" action="montage.php">
+			<input name="montage_to_delete" type="hidden" value="<?= $montage['id'] ?>">
+			<input name="remove_montage" type="submit" value="delet">
 		</form>
-	`;
- */
-		var videoElement = document.getElementById("videoElement");
+	<?php }
+?>
+</div>
+<script>
+var videoElement = document.getElementById("videoElement");
 
-				console.log("video");
-		if (navigator.mediaDevices.getUserMedia) {       
-			navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
-				videoElement.srcObject = stream;
-			}).catch(function(err0r) {
-				console.log("No stream!");
-			});
-		}
+if (navigator.mediaDevices.getUserMedia)
+{       
+	navigator.mediaDevices.getUserMedia({video: true}).then(function(stream) {
+		//Webcam available
+		videoElement.srcObject = stream;
+		document.getElementById('webcam_available').removeAttribute('hidden', '');
+		var radio = document.getElementsByName('radio_image');
+		radio.forEach(function(r){
+			r.setAttribute('form', 'webcam_form');
+		});
+	}).catch(function(err0r) {
+		//Webcam not available
+		document.getElementById('webcam_unavailable').removeAttribute('hidden', '');
+		var radio = document.getElementsByName('radio_image');
+		radio.forEach(function(r){
+			r.setAttribute('form', 'file_form');
+		});
+	});
+}
 </script>
-<?php include 'footer.php' ?>
-
 <script>
 function upload_montage()
 {
-	var form = document.forms['alpha'];
+	var form = document.forms['webcam_form'];
 	var canvas = document.getElementById('canvas');
 	var context = canvas.getContext('2d');
 	var video = document.getElementById('videoElement');
@@ -112,3 +168,4 @@ function upload_montage()
 	}
 }
 </script>
+<?php include 'footer.php' ?>
