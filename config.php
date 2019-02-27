@@ -26,29 +26,34 @@ try {
 		user_id			INTEGER,
 		task			TEXT,
 		data			TEXT,
-		date			INTEGER		DEFAULT CURRENT_TIMESTAMP
+		date			INTEGER		DEFAULT CURRENT_TIMESTAMP,
+		CONSTRAINT fk_email_task_users FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 	);");
 	$pdo->query("CREATE TABLE IF NOT EXISTS montages (
 		id				INTEGER		PRIMARY KEY,
 		user_id			INTEGER,
 		image			TEXT,
-		date			INTEGER		DEFAULT CURRENT_TIMESTAMP
+		date			INTEGER		DEFAULT CURRENT_TIMESTAMP,
+		CONSTRAINT fk_montages_users FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 	);");
 	$pdo->query("CREATE TABLE IF NOT EXISTS comments (
 		id				INTEGER		PRIMARY KEY,
 		user_id			INTEGER,
 		montage_id		INTEGER,
 		message			TEXT,
-		date			INTEGER		DEFAULT CURRENT_TIMESTAMP
+		date			INTEGER		DEFAULT CURRENT_TIMESTAMP,
+		CONSTRAINT comments_users FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+		CONSTRAINT comments_montages FOREIGN KEY (montage_id) REFERENCES montages(id) ON DELETE CASCADE
 	);");
 	$pdo->query("CREATE TABLE IF NOT EXISTS likes (
 		id				INTEGER		PRIMARY KEY,
 		user_id			INTEGER,
 		montage_id		INTEGER,
 		type			TEXT		NULL,
-		date			INTEGER		DEFAULT CURRENT_TIMESTAMP
+		date			INTEGER		DEFAULT CURRENT_TIMESTAMP,
+		CONSTRAINT likes_users FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+		CONSTRAINT likes_montages FOREIGN KEY (montage_id) REFERENCES montages(id) ON DELETE CASCADE
 	);");
-
 	
 
 
@@ -60,5 +65,6 @@ try {
 
 populate();
 
-mkdir('montages');
+if (!file_exists('montages'))
+	mkdir('montages');
 ?>
