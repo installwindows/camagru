@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 		$image_url = "";
 		if (empty($_POST['radio_image']))
 			$select_error = "Sélectionnez un filtre.";
-		else if (!file_exists("images/$filter"))
+		else if (!file_exists(dirname(__FILE__)."/images/$filter"))
 			$error_message = "Filtre invalide!";
 		else if (isset($_POST['file_form']))
 		{
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 			$b64 = substr($canvas, strpos($canvas, ',') + 1);
 			$image = base64_decode($b64);
 			//$image_url = "montages/" . time() . ".png";
-			$image_url = "montages_tmp" . time() . ".png";
+			$image_url = dirname(__FILE__)."/montages_tmp" . time() . ".png";
 			file_put_contents($image_url, $image);
 		}
 		else
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 	}
 }
 $page_title = "Montage";
-$page_head = "<link rel='stylesheet' href='montage.css'><link rel='stylesheet' href='m2.css'>";
+$page_head = "<link rel='stylesheet' href='montage.css'>";
 ?>
 <?php include 'head.php' ?>
 <div class='container'>
@@ -105,7 +105,7 @@ $page_head = "<link rel='stylesheet' href='montage.css'><link rel='stylesheet' h
 <div class="image_list">
 	<span id="select_error"></span><br>
 	<?php
-	$files = array_diff(scandir('images'), ['.', '..']);
+	$files = array_diff(scandir(dirname(__FILE__).'/images'), ['.', '..']);
 	foreach ($files as $file) { ?>
 		<label for="radio<?= $file ?>"><input form="" type="radio" name="radio_image" value="<?= $file ?>" id="radio<?= $file ?>"><img class="lst_img" src="images/<?= $file ?>" height="120" width="160" onclick="document.querySelector('.overlay').style.backgroundImage = 'url(\'images/<?= $file ?>\')';"></label>
 	<?php } ?>

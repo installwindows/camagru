@@ -1,5 +1,5 @@
 <?php
-$DB_DSN = "sqlite:db.sqlite";
+$DB_DSN = "sqlite:".dirname(__FILE__)."/../db.sqlite";
 
 function get_database_connection()
 {
@@ -150,7 +150,10 @@ function send_task($user_id, $task, $data = "")
 	$email = $user['email'];
 	$message = "";
 	$subject = "";
-	$headers = "Content-Type: text/html; charset=UTF-8\r\n";
+	$headers = 
+		'From: no-reply@camagru.art' . "\r\n" .
+		'Content-Type: text/html; charset=UTF-8' . "\r\n" .
+		'X-Mailer: PHP/'.phpversion();
 	$id = hash('whirlpool', time() . rand() . $email);
 	$verification_url = "http://" . $_SERVER['HTTP_HOST'] . "/email.php?id=" . $id;
 
@@ -222,15 +225,7 @@ function create_new_montage($image_url, $filter, $user_id)
 		return false;
 	$img = imagescale($img, 640, 480);
 	imagepng($img, "output.png");
-	/*
-	$metadata = getimagesize($image_url);
-	if ($metadata === false || $metadata['mime'] !== "image/png")
-	{
-		unlink($image_url);
-		return false;
-	}
-	 */
-	$source = imagecreatefrompng("images/$filter");
+	$source = imagecreatefrompng(dirname(__FILE__)."/images/$filter");
 	if ($source === false)
 		return false;
 	//$dest = imagecreatefrompng($image_url);
@@ -471,7 +466,10 @@ function notify_user($user_id, $type, $data)
 	}
 	else
 		return false;
-	$headers = "Content-Type: text/html; charset=UTF-8\r\n";
+	$headers = 
+		'From: no-reply@camagru.art' . "\r\n" .
+		'Content-Type: text/html; charset=UTF-8' . "\r\n" .
+		'X-Mailer: PHP/'.phpversion();
 	$email = $user['email'];
 	mail($email, $subject, $message, $headers);
 	return true;
