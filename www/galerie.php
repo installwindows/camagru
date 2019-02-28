@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
 	}
 }
 
-$page_title = "galerie.css";
+$page_title = "Galerie des Camagruistes!";
 $page_head = "<link rel='stylesheet' href='index.css'><link rel='stylesheet' href='galerie.css'>";
 ?>
 <?php include 'head.php'; ?>

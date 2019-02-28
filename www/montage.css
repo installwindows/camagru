@@ -7,14 +7,14 @@
 .main {
 	grid-area: m;
 	color: #FCE0FF;
-	background-image: url('pink dust.png');
+	background-image: url('assets/pink dust.png');
 	padding: 10px;
 }
 
 .side {
 	grid-area: s;
 	color: #012345;
-	background-image: url('stardust.png');
+	background-image: url('assets/stardust.png');
 	padding: 10px;
 	overflow: scroll;
 	max-height: 92vh;

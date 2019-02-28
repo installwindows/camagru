@@ -1,5 +1,5 @@
 <?php
-include "database.php";
+include "www/database.php";
 
 function populate()
 {

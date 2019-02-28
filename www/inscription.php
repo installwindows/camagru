@@ -4,6 +4,7 @@ if (isset($_SESSION['user_id']))
 	header("Location: compte.php");
 include 'database.php';
 include 'validate.php';
+$success_message = "";
 $email = ""; $email_error = false; $email_error_message = "";
 $username = ""; $username_error = false; $username_error_message = "";
 $password = ""; $password_error = false; $password_error_message = "";
@@ -48,9 +49,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
 		if ($user_id = create_user($email, $username, $password))
 		{
 			send_task($user_id, "inscription_email");
-			header("Refresh:3; url=index.php");
-			echo "Veuillez activer votre compte en suivant le lien envoyé à celui-ci.";
-			die();
+			//header("Refresh:3; url=index.php");
+			$success_message = "Veuillez activer votre compte en suivant le lien envoyé à celui-ci.";
+			//die();
 		}
 		else
 		{
@@ -66,6 +67,7 @@ $page_head = "<link rel='stylesheet' href='index.css'>";
 <?php include 'header.php'; ?>
 <div class="main">
 <h2>Inscription</h2>
+<div class="success"><?= $success_message ?></div>
 <form method="POST" action="inscription.php">
 <label for="email" class="<?php echo $email_error ? $label_class : ""; ?>">Courriel</label>: <input type="text" name="email" id="email" value="<?php echo $email; ?>"> <?php echo $email_error_message; ?><br>
 	<label for="username" class="<?php echo $username_error ? $label_class : ""; ?>">Username</label>: <input type="text" name="username" id="username" value="<?php echo $username; ?>"> <?php echo $username_error_message; ?><br>
