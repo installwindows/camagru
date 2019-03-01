@@ -1,0 +1,154 @@
+<html>
+<head>
+<style>
+	.palette {
+		float: left;
+		padding: 5px;
+		width: 100px;
+		height: 400px;
+		overflow-y: auto;
+	}
+	.palette_elem {
+		width: 90px;
+		height: 25px;
+		font-family: Courier;
+	}
+</style>
+<script src="libft.js"></script>
+</head>
+<body>
+Seed: <input id="color" type="text" value="FFFFFF"> | 
+Size: <input id="size" type="text" value="16"> 
+<button onclick="get_palette('random', document.getElementById('color').value,document.getElementById('size').value)">Random pastel</button>
+<button onclick="get_palette('gradient', document.getElementById('color').value,document.getElementById('size').value)">Gradient</button>
+<hr>
+<div id="galerie"></div>
+<script>
+function generate_random_palette(seed, size = 16)
+{
+	var palette = new Array(size);
+	seed = parseInt(seed, 16) & 0xFFFFFF;
+
+	for (var i = 0; i < size; i++)
+	{
+		var r = Math.floor(Math.random() * 255);
+		var g = Math.floor(Math.random() * 255);
+		var b = Math.floor(Math.random() * 255);
+
+		r = Math.floor((r + (seed >> 16 & 0xFF)) / 2);
+		g = Math.floor((g + (seed >> 8 & 0xFF)) / 2);
+		b = Math.floor((b + (seed & 0xFF)) / 2);
+		palette[i] = {r: r, g: g, b: b};
+	}
+	return palette;
+}
+
+function rgb_to_hsv(red, green, blue)
+{
+
+}
+
+function hsv_to_rgb(hue, saturation, value)
+{
+	var r = 0;
+	var g = 0;
+	var b = 0;
+
+	hue = hue % 360;
+	saturation = saturation > 100 ? saturation % 100 : saturation;
+	value = value > 100 ? value % 100 : value;
+	var invert_saturation = Math.abs(100 - saturation) / 100;
+	if ((hue >= 0 && hue < 60) || hue == 360) //Red
+	{
+		var secondary = ((hue * 255) / 60) * (value / 100);
+		r = (value * 255) / 100;
+		g = secondary + (r - secondary) * invert_saturation;
+		b = r * invert_saturation;
+	}
+	else if (hue >= 60 && hue < 120) //Yellow
+	{
+		var secondary = ((120 - hue) / 60) * 255 * (value / 100);
+		g = (value * 255) / 100;
+		r = secondary + (g - secondary) * invert_saturation;
+		b = g * invert_saturation;
+	}
+	else if (hue >= 120 && hue < 180) //Green
+	{
+		var secondary = (Math.abs(180 - hue - 60) / 60) * 255 * (value / 100);
+		g = (value * 255) / 100;
+		b = secondary + (g - secondary) * invert_saturation;
+		r = g * invert_saturation;
+	}
+	else if (hue >= 180 && hue < 240) //Cyan
+	{
+		var secondary = (240 - hue) / 60 * 255 * (value / 100);
+		b = (value * 255) / 100;
+		g = secondary + (b - secondary) * invert_saturation;
+		r = b * invert_saturation;
+	}
+	else if (hue >= 240 && hue < 300) //Blue
+	{
+		var secondary = (Math.abs(300 - hue - 60) / 60) * 255 * (value / 100);
+		b = (value * 255) / 100;
+		g = b * invert_saturation;
+		r = secondary + (b - secondary) * invert_saturation;
+	}
+	else if (hue >= 300 && hue < 360) //Mangenta
+	{
+		var secondary = ((360 - hue) / 60) * 255 * (value / 100);
+		r = (value * 255) / 100;
+		b = secondary + (r - secondary) * invert_saturation;
+		g = r * invert_saturation;
+	}
+	return {r: Math.round(r), g: Math.round(g), b: Math.round(b)};
+}
+
+function generate_gradient(color, size = 200)
+{
+	var palette = new Array(size);
+	var hue = 0;
+	var sat = 100;
+	var value = 100;
+
+
+	for (var i = 0; i < size; i++)
+	{
+		palette[i] = hsv_to_rgb(hue, sat, value);
+		hue++;
+		if (sat >= 50)
+			sat--;
+		if (sat < 50)
+			sat++;
+		if (value >= 70)
+			value--;
+		if (value < 70)
+			value++;
+	}
+	return palette;
+}
+
+function get_palette(type, seed, size = 16)
+{
+	var doc = document.getElementById('galerie');
+	var container = document.createElement('div');
+	var palette = [];
+	if (type === "random")
+		palette = generate_random_palette(seed, size);
+	else if (type === "gradient")
+		palette = generate_gradient(seed, size);
+
+	for (var i = 0; i < palette.length; i++)
+	{
+		var r = palette[i].r;
+		var g = palette[i].g;
+		var b = palette[i].b;
+		var style = "background-color: rgb(" + r + "," + g + "," + b + ");";
+		container.innerHTML += "<div class='palette_elem' style='" + style + "'>#" + ft_pad((r << 16) | (g << 8) | b, 6, 16) + "</div>";
+	}
+	container.setAttribute('class', 'palette');
+	doc.insertBefore(container, null);
+}
+
+</script>
+</body>
+</html>
