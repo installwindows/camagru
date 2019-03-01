@@ -1,9 +1,9 @@
 <?php
 include 'database.php';
+$message = "";
 if (isset($_GET["id"]))
 {
 	$id = $_GET["id"];
-	$message = "";
 	try {
 		$pdo = get_database_connection();
 		$query = $pdo->prepare("SELECT * FROM email_task WHERE id = :id");
@@ -31,7 +31,6 @@ if (isset($_GET["id"]))
 			$query = $pdo->prepare("DELETE FROM email_task WHERE id = :id");
 			$query->execute(array("id" => $id));
 			header("Refresh:3; url=index.php");
-			echo $message;
 		}
 		else
 			header("Location: index.php");
@@ -44,4 +43,14 @@ else
 {
 	header("Location: index.php");
 }
+$page_title = "Hi friend!";
+$page_head = "<link rel='stylesheet' href='index.css'>";
 ?>
+<?php include 'head.php'; ?>
+<div class="container">
+<?php include 'header.php'; ?>
+<div class="main">
+<?= $message ?>
+</div>
+<?php include 'footer.php'; ?>
+</div>

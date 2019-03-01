@@ -457,12 +457,12 @@ function notify_user($user_id, $type, $data)
 	if ($type == "like")
 	{
 		$subject = "{$user2['username']} aime l'un de vos montages!";
-		$message = "Votre <a href=''>montage</a> est aimé par le Camagruiste {$user2['username']}!";
+		$message = "Votre <a href='http://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/galerie.php?montage={$data['montage_id']}'>montage</a> est aimé par le Camagruiste {$user2['username']}!";
 	}
 	else if ($type == "comment")
 	{
 		$subject = "{$user2['username']} a laissé un commentaire sur l'un de vos montages!";
-		$message = "Je cite: « {$data['message']} » - {$user2['username']}, faisant référence à votre <a href=''>montage</a>.";
+		$message = "Je cite: « {$data['message']} » - {$user2['username']}, faisant référence à votre <a href='http://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/galerie.php?montage={$data['montage_id']}'>montage</a>.";
 	}
 	else
 		return false;
