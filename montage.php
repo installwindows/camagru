@@ -103,7 +103,7 @@ $page_head = "<link rel='stylesheet' href='montage.css'>";
 <span class="success" id="upload_success"><?= $upload_success ?></span>
 </div>
 <div class="image_list">
-	<span id="select_error"></span><br>
+	<span id="select_error"><?= $select_error ?></span><br>
 	<?php
 	$files = array_diff(scandir(dirname(__FILE__).'/images'), ['.', '..']);
 	foreach ($files as $file) { ?>
