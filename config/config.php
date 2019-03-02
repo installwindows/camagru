@@ -1,15 +1,17 @@
 <?php
-include "www/database.php";
+include dirname(__FILE__)."/../database.php";
 
 function populate()
 {
-	echo create_user("alec@menard.com", "alec", "camagru", 1);
-	echo create_user("Amajuscule@something.li", "Amaj", "camagru", 1);
-	echo create_user("ralph@camagru.fr", "ralph", "camagru", 1);
-	echo create_user("qerty@w.uwu", "Wasp", "camagru", 1);
+	create_user("alec@menard.com", "alec", "camagru", 1);
+	create_user("Amajuscule@something.li", "Amaj", "camagru", 1);
+	create_user("ralph@camagru.fr", "ralph", "camagru", 1);
+	create_user("qerty@w.uwu", "Wasp", "camagru", 1);
 }
 
 try {
+	if (file_exists(dirname(__FILE__).'/db.sqlite'))
+		unlink(dirname(__FILE__).'/db.sqlite');
 	$pdo = get_database_connection();
 	$pdo->query("CREATE TABLE IF NOT EXISTS users (
 		id				INTEGER		PRIMARY KEY AUTOINCREMENT,
@@ -65,6 +67,6 @@ try {
 
 populate();
 
-if (!file_exists('montages'))
-	mkdir('montages');
+if (!file_exists(dirname(__FILE__).'/../montages'))
+	mkdir(dirname(__FILE__).'/../montages');
 ?>

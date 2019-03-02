@@ -1,5 +1,5 @@
 <?php
-$DB_DSN = "sqlite:".dirname(__FILE__)."/../db.sqlite";
+include 'config/database.php';
 
 function get_database_connection()
 {
