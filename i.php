@@ -11,6 +11,7 @@ session_start();
 <div id="response_text">
 </div>
 <script>
+<!--
 function login() {
 	var form = document.forms['login_form'];
 	var xhttp = new XMLHttpRequest();
@@ -23,4 +24,5 @@ function login() {
 	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xhttp.send("submit=" + form['submit'].value + "&username=" + form['username'].value + "&password=" +  form['password'].value);
 }
+//-->
 </script>

@@ -13,6 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST')
 		case 'logout':
 				$result = handle_logout($_POST);
 			break;
+		case 'montage':
+				$result = handle_montage($_POST);
+			break;
 		default:
 				$result = ['error' => ['Bad request']];
 		//TODO THE REST
